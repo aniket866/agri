@@ -9,7 +9,7 @@ export default function WeatherCard({ onClose }) {   // ✅ accept onClose
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const API_KEY = "35a37d6b2c00b0bec3c696ab20a2eaa8"; // Replace with your OpenWeatherMap API key
+  const API_KEY = ""; // Replace with your OpenWeatherMap API key
   // Fetch weather by city
   const getWeather = async () => {
     if (!city.trim()) {
@@ -104,3 +104,4 @@ export default function WeatherCard({ onClose }) {   // ✅ accept onClose
     </div>
   );
 }
+
