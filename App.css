@@ -1,0 +1,464 @@
+/* ========================= */
+/* 🌿 Global Reset */
+/* ========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root, .app {
+  height: 100%;
+  width: 100%;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ========================= */
+/* 🌿 Navbar */
+/* ========================= */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* left | center | right */
+  align-items: center;
+  padding: 15px 40px;
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  color: white;
+  position: relative;
+  width: 100%;
+}
+
+/* Left: Brand */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-left .brand {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  text-decoration: none;
+}
+
+/* Center: Links */
+.nav-center {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+.nav-center a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.nav-center a:hover {
+  color: #dff9fb;
+}
+
+/* Right: Language + User */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: white;
+}
+.nav-user .icon {
+  margin-right: 4px;
+  color: #ffd700;
+}
+.nav-user button.logout-btn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.3s;
+}
+.nav-user button.logout-btn:hover {
+  background: #cc0000;
+}
+
+/* Language dropdown */
+.lang-select {
+  appearance: none;
+  background-color: yellow;
+  color: black;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.lang-select:hover {
+  background-color: #ffd600;
+  transform: translateY(-2px);
+}
+.lang-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.4);
+}
+
+/* Hamburger (desktop hidden) */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* ========================= */
+/* 📱 Responsive Navbar */
+/* ========================= */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-center {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: #27ae60;
+    padding: 15px 0;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .nav-center.active {
+    display: flex;
+    animation: slideDown 0.3s ease-in-out;
+  }
+
+  .nav-right {
+    display: none; /* hide in desktop row */
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    background: #27ae60;
+    border-radius: 0 0 8px 8px;
+    padding-bottom: 15px;
+  }
+
+  .nav-center.active + .nav-right {
+    display: flex;
+  }
+}
+
+/* Animation */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================= */
+/* 🌿 Alert Bar */
+/* ========================= */
+.alert-bar {
+  background: #ffeb3b;
+  color: #333;
+  padding: 10px;
+  text-align: center;
+  position: relative;
+  width: 100%;
+}
+.close-btn {
+  position: absolute;
+  right: 15px;
+  top: 5px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ========================= */
+/* 🌿 Hero Section */
+/* ========================= */
+.hero {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+.hero .overlay {
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px 40px;
+  border-radius: 10px;
+  max-width: 90%;
+}
+.fade-in {
+  animation: fadeIn 2s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================= */
+/* 🌿 Mute Button */
+/* ========================= */
+#muteToggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ========================= */
+/* 🌿 Responsive Hero & Mute */
+/* ========================= */
+@media (max-width: 992px) {
+  .hero {
+    height: 80vh;
+    padding: 0 20px;
+  }
+  .hero .overlay {
+    padding: 15px 20px;
+    font-size: 0.9rem;
+  }
+}
+@media (max-width: 600px) {
+  .hero {
+    height: auto;
+    padding: 40px 15px;
+  }
+  .hero .overlay {
+    padding: 12px 18px;
+    font-size: 0.85rem;
+  }
+  #muteToggle {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+/* ========================= */
+/* 🌿 Farmer-Friendly Login Page */
+/* ========================= */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(to right, #f6d365, #fda085); /* warm, sunny colors */
+  font-family: "Poppins", sans-serif;
+  padding: 20px;
+}
+
+/* Login Card */
+.login-card {
+  background: #fffaf0; /* soft background */
+  padding: 40px 35px;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  border: 2px solid #ffd27f; /* subtle border */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Hover effect to make it interactive */
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Heading */
+.login-card h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #2e7d32; /* green, nature/farming */
+  font-weight: 700;
+}
+
+/* Description text */
+.login-card p {
+  font-size: 1rem;
+  margin-bottom: 25px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Inputs & Dropdown */
+.login-card input,
+.login-card select {
+  width: 100%;
+  padding: 14px 15px;
+  margin-bottom: 18px;
+  border: 1.5px solid #ccc;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Focus effect for better accessibility */
+.login-card input:focus,
+.login-card select:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 10px rgba(46, 125, 50, 0.4);
+}
+
+/* Button */
+.login-card button {
+  width: 100%;
+  padding: 16px 0;
+  background: #2e7d32;
+  color: white;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover and active states */
+.login-card button:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+}
+
+.login-card button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(46, 125, 50, 0.2);
+}
+
+/* Note below form */
+.login-note {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Placeholder style for readability */
+.login-card input::placeholder,
+.login-card select::placeholder {
+  color: #999;
+  font-size: 1rem;
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px 20px;
+  }
+
+  .login-card h2 {
+    font-size: 1.7rem;
+  }
+
+  .login-card input,
+  .login-card select {
+    font-size: 1rem;
+    padding: 12px 14px;
+  }
+
+  .login-card button {
+    font-size: 1.05rem;
+    padding: 14px 0;
+  }
+}
+
+/* ========================= */
+/* 🌿 Navbar User Section */
+/* ========================= */
+.nav-user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.nav-user:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-user a {
+  color: #fff !important;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-user a:hover {
+  color: #dff9fb;
+}
+
+/* Logout button */
+.nav-user .logout-btn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.3s ease;
+}
+
+.nav-user .logout-btn:hover {
+  background: #cc0000;
+}
