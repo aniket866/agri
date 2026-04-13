@@ -5,15 +5,13 @@ from sklearn.metrics import mean_squared_error
 import joblib
 import numpy as np
 
-# Load your dataset
-df = pd.read_csv("dataset 5.csv")
+df = pd.read_csv("Train.csv")
 
-# Features (all except the target year) and target (the latest year column)
-X = df.drop(columns=["2023-24"])
-y = df["2023-24"]
+X = df.drop(columns=["FarmID", "category", "State", "District", "Sub-District", "SDate", "HDate", "ExpYield", "geometry"])
+y = df["ExpYield"]
 
-# One-hot encode crop column
-X = pd.get_dummies(X, columns=['Crop-wise'], drop_first=True)
+categorical_cols = ['Crop', 'CNext', 'CLast', 'CTransp', 'IrriType', 'IrriSource', 'Season']
+X = pd.get_dummies(X, columns=categorical_cols, drop_first=True)
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(
