@@ -15,16 +15,21 @@
 /* Popup container */
 .weather-popup {
   position: relative;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(16px);
+  background: var(--brand-primary);
   border-radius: 20px;
   padding: 25px;
-  max-width: 380px;
-  width: 90%;
+  max-width: 450px;
+  width: 95%;
   text-align: center;
   color: #fff;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   animation: slideUp 0.4s ease-in-out;
+}
+
+.sunlight .weather-popup {
+  background: #fff !important;
+  color: #000 !important;
+  border: 6px solid #000 !important;
 }
 
 /* Close button */
@@ -53,9 +58,9 @@
 }
 
 .subtitle {
-  font-size: 14px;
-  opacity: 0.8;
-  margin-bottom: 15px;
+  font-size: 1.1rem;
+  opacity: 1;
+  margin-bottom: 20px;
 }
 
 .input-group {
@@ -117,11 +122,12 @@
 }
 
 .details {
-  font-size: 14px;
-  margin-top: 8px;
+  font-size: 1.1rem;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  font-weight: 600;
 }
 
 /* Animations */
