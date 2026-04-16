@@ -46,9 +46,8 @@
 
 .hero-section {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding: 120px 5% 80px;
+  display: block;
+  padding: 100px 20px 80px;
   position: relative;
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f0fdf4 100%);
   overflow: hidden;
@@ -70,9 +69,18 @@
 }
 
 .hero-content {
-  flex: 1;
-  max-width: 650px;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.hero-copy {
+  max-width: 650px;
+  margin-left: 48px;
 }
 
 .hero-badge {
@@ -186,14 +194,19 @@
 }
 
 .hero-stats {
-  display: flex;
-  gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+  gap: 20px;
+  margin-top: 22px;
   animation: slideUp 0.6s ease-out 0.4s both;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .stat-number {
@@ -208,17 +221,17 @@
 }
 
 .hero-visual {
-  flex: 1;
-  position: relative;
+  position: absolute;
+  right: 34px;
+  top: 46%;
+  transform: translateY(-50%);
+  width: 420px;
   height: 500px;
   display: none;
+  z-index: 1;
 }
 
 @media (min-width: 1024px) {
-  .hero-section {
-    justify-content: space-between;
-  }
-
   .hero-visual {
     display: block;
   }
@@ -237,20 +250,20 @@
 }
 
 .floating-card.card-1 {
-  top: 10%;
-  right: 20%;
+  top: 8%;
+  right: 24%;
   animation-delay: 0s;
 }
 
 .floating-card.card-2 {
-  top: 40%;
-  right: 5%;
+  top: 36%;
+  right: 9%;
   animation-delay: 0.5s;
 }
 
 .floating-card.card-3 {
-  bottom: 20%;
-  right: 25%;
+  bottom: 24%;
+  right: 29%;
   animation-delay: 1s;
 }
 
@@ -683,8 +696,12 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    padding: 100px 5% 60px;
+    padding: 100px 20px 60px;
     text-align: center;
+  }
+
+  .hero-copy {
+    margin-left: 0;
   }
 
   .hero-title {
@@ -709,9 +726,8 @@
   }
 
   .hero-stats {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
   }
 
   .section-header h2 {
@@ -720,6 +736,12 @@
 
   .features-grid,
   .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats {
     grid-template-columns: 1fr;
   }
 }
