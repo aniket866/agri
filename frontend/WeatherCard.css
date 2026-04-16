@@ -1,3 +1,4 @@
+/* Overlay */
 .weather-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -11,6 +12,7 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Popup container */
 .weather-popup {
   position: relative;
   background: var(--brand-primary);
@@ -30,6 +32,7 @@
   border: 6px solid #000 !important;
 }
 
+/* Close button */
 .close-btn {
   position: absolute;
   top: 12px;
@@ -49,6 +52,7 @@
   color: red;
 }
 
+/* Weather card content */
 .weather-card h2 {
   margin-bottom: 5px;
 }
@@ -94,6 +98,7 @@
 }
 .location-btn:hover { background: #1e7e34; }
 
+/* Weather info */
 .weather-info {
   margin-top: 20px;
   background: rgba(255,255,255,0.15);
@@ -125,6 +130,7 @@
   font-weight: 600;
 }
 
+/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
@@ -134,7 +140,7 @@
   from { transform: translateY(40px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
-
+/* 📱 Mobile (up to 600px) */
 @media (max-width: 600px) {
   .weather-popup {
     max-width: 90%;
@@ -172,6 +178,7 @@
   }
 }
 
+/* 📱 Small tablets (601px–900px) */
 @media (min-width: 601px) and (max-width: 900px) {
   .weather-popup {
     max-width: 420px;
@@ -202,6 +209,7 @@
   }
 }
 
+/* 💻 Large screens (above 1200px) */
 @media (min-width: 1200px) {
   .weather-popup {
     max-width: 500px;

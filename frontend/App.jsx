@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import Advisor from "./Advisor";
 import How from "./How";
 import Home from "./Home";
-import {
-  FaHome,
-  FaComments,
-  FaInfoCircle,
-  FaLeaf,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
+import { FaHome, FaComments, FaInfoCircle, FaLeaf, FaBars, FaTimes } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+
+// 🔹 ScrollToTop component to fix navigation positioning
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function App() {
   const [loginLang, setLoginLang] = useState("");
@@ -24,6 +27,7 @@ function App() {
   const [preferredLang, setPreferredLang] = useState(
     localStorage.getItem("preferredLanguage") || ""
   );
+
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -58,7 +62,10 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className={sunlight ? "app sunlight" : "app"}>
+
+        {/* Navbar */}
         {/* NAVBAR */}
         <nav className="navbar">
           <div className="nav-left">
@@ -94,6 +101,7 @@ function App() {
               {sunlight ? "👁️ Normal View" : "☀️ Sunlight Mode"}
             </button>
 
+            {/* Language Dropdown */}
             {/* LANGUAGE SELECT */}
             <select
               className="lang-select"

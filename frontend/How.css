@@ -14,6 +14,7 @@
   background: #fff !important;
 }
 
+/* Decorative floating glow */
 .howitworks::before {
   content: "";
   position: absolute;
@@ -46,6 +47,7 @@
   margin-bottom: 50px;
 }
 
+/* Steps Grid */
 .steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -70,6 +72,7 @@
   border-color: #22c55e;
 }
 
+/* Step Number Badge */
 .step-card::before {
   content: attr(data-step);
   position: absolute;
@@ -84,6 +87,7 @@
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Icons */
 .step-icon {
   font-size: 2.5rem;
   margin-bottom: 15px;
@@ -110,9 +114,34 @@
   color: #000 !important;
 }
 
+/* Animations */
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 20px); }
+}
+
+.fade-up {
+  animation: fadeUp 1s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.slide-in {
+  animation: slideIn 1s ease forwards;
+  opacity: 0;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes float {
