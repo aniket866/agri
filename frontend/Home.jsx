@@ -8,6 +8,10 @@ import {
   FaChartLine,
   FaPhoneAlt,
   FaQuoteLeft,
+  FaFlask,
+  FaLeaf,
+  FaLock,
+  FaGlobe,
 } from "react-icons/fa";
 import "./Home.css";
 
@@ -16,22 +20,50 @@ export default function Home() {
     {
       icon: <FaBrain />,
       title: "AI-Powered Predictions",
-      desc: "Smart crop yield predictions using advanced machine learning",
+      desc: "Smart crop yield predictions using advanced machine learning algorithms",
+      category: "Analytics",
     },
     {
       icon: <FaSun />,
       title: "Weather Insights",
-      desc: "Real-time weather forecasts tailored for farming decisions",
+      desc: "Real-time weather forecasts and custom alerts tailored for your farm",
+      category: "Monitoring",
     },
     {
       icon: <FaHandHoldingWater />,
-      title: "Irrigation Advice",
-      desc: "Smart irrigation recommendations to optimize water usage",
+      title: "Smart Irrigation",
+      desc: "Optimize water usage with AI-driven irrigation recommendations",
+      category: "Optimization",
     },
     {
       icon: <FaChartLine />,
       title: "Yield Optimization",
       desc: "Maximize your harvest with data-driven farming strategies",
+      category: "Analytics",
+    },
+    {
+      icon: <FaFlask />,
+      title: "Soil Analysis",
+      desc: "Comprehensive soil health monitoring and nutrient level analysis",
+      category: "Monitoring",
+    },
+    {
+      icon: <FaLeaf />,
+      title: "Crop Recommendations",
+      desc: "Get crop suggestions based on soil profile and regional climate",
+      category: "Recommendations",
+    },
+    {
+      icon: <FaChartLine />,
+      title: "Fertilizer Guidance",
+      desc: "Personalized fertilizer and pesticide recommendations",
+      category: "Recommendations",
+    },
+    {
+      icon: <FaLock />,
+      title: "Secure & Private",
+      desc: "Enterprise-grade security with Firebase authentication",
+      category: "Protection",
     },
   ];
 
@@ -118,6 +150,7 @@ export default function Home() {
         <div className="features-grid">
           {features.map((feature, index) => (
             <div key={index} className="feature-card">
+              <div className="feature-category">{feature.category}</div>
               <div className="feature-icon">{feature.icon}</div>
               <h3>{feature.title}</h3>
               <p>{feature.desc}</p>
