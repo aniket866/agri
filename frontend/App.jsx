@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 
 function App() {
+  const [loginLang, setLoginLang] = useState("");
   const [showAlert, setShowAlert] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [sunlight, setSunlight] = useState(false); 
@@ -21,19 +22,57 @@ function App() {
   const [name, setName] = useState(localStorage.getItem("farmerName") || "");
   const [inputName, setInputName] = useState("");
   const [preferredLang, setPreferredLang] = useState(
-    localStorage.getItem("preferredLanguage") || "en"
+    localStorage.getItem("preferredLanguage") || ""
   );
+
+  // Auto-apply preferred language using Google Translate
+  useEffect(() => {
+  if (!preferredLang) return;
+
+  const applyLang = () => {
+    const select = document.querySelector(".goog-te-combo");
+    if (!select) return false;
+
+    if (select.value !== preferredLang) {
+      select.value = preferredLang;
+      select.dispatchEvent(new Event("change"));
+    }
+    return true;
+  };
+
+  if (applyLang()) return;
+
+  const observer = new MutationObserver(() => {
+    if (applyLang()) observer.disconnect();
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  return () => observer.disconnect();
+}, [preferredLang]);
+  const videoRef = useRef(null);
 
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (inputName.trim() && preferredLang) {
+
+    if (!inputName.trim()) {
+    alert("Name is required");
+    return;
+  }
+
+  if (!loginLang) {
+    alert("Please select a language");
+    return;
+  }
       localStorage.setItem("farmerName", inputName);
-      localStorage.setItem("preferredLanguage", preferredLang);
+      localStorage.setItem("preferredLanguage", loginLang);
+
       setName(inputName);
+      setPreferredLang(loginLang);
+
       setInputName("");
       window.location.href = "/";
-    }
   };
 
   const handleLogout = () => {
@@ -46,6 +85,11 @@ function App() {
 
   return (
     <Router>
+      <div className="app">
+        {/* Google Translate Widget */}
+        <GoogleTranslate lang={preferredLang} />
+
+      {}
       <div className={sunlight ? "app sunlight" : "app"}>
         <nav className="navbar">
           <div className="nav-left">
@@ -83,7 +127,8 @@ function App() {
             </button>
 
             <select
-              className="lang-select"
+              className="lang-select notranslate"
+              translate="no"
               value={preferredLang}
               onChange={(e) => {
                 const lang = e.target.value;
@@ -91,6 +136,7 @@ function App() {
                 localStorage.setItem("preferredLanguage", lang);
               }}
             >
+              <option value="">Select Language</option>
               <option value="en">🌍 English</option>
               <option value="hi">🇮🇳 हिंदी</option>
               <option value="mr">🇮🇳 मराठी</option>
@@ -146,19 +192,31 @@ function App() {
                 <div className="login-card">
                   <h2>👨‍🌾 Farmer Login</h2>
                   <p>Welcome! Please provide your details to continue.</p>
-                  <form onSubmit={handleLogin}>
+                  <form onSubmit={handleLogin} noValidate>
                     <input
                       type="text"
                       placeholder="Enter your name"
                       value={inputName}
                       onChange={(e) => setInputName(e.target.value)}
-                      required
                     />
                     <select
-                      value={preferredLang}
-                      onChange={(e) => setPreferredLang(e.target.value)}
-                      required
+                      className="notranslate"
+                      translate="no"
+                      value={loginLang}
+                      onChange={(e) => setLoginLang(e.target.value)}
                     >
+                      <option value="">Select Language</option>
+                      <option value="en">🌍 English</option>
+                      <option value="hi">🇮🇳 हिंदी (Hindi)</option>
+                      <option value="mr">🇮🇳 मराठी (Marathi)</option>
+                      <option value="bn">🇮🇳 বাংলা (Bengali)</option>
+                      <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
+                      <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+                      <option value="gu">🇮🇳 ગુજરાતી (Gujarati)</option>
+                      <option value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
+                      <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+                      <option value="ml">🇮🇳 മലയാളം (Malayalam)</option>
+                      <option value="or">🇮🇳 ଓଡ଼ିଆ (Odia)</option>
                       <option value="en">English</option>
                       <option value="hi">Hindi</option>
                       <option value="mr">Marathi</option>
