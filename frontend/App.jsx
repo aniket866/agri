@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import Advisor from "./Advisor";
 import How from "./How";
 import Home from "./Home";
-import GoogleTranslate from "./GoogleTranslate";
 import {
   FaHome,
   FaComments,
@@ -25,34 +24,6 @@ function App() {
   const [preferredLang, setPreferredLang] = useState(
     localStorage.getItem("preferredLanguage") || ""
   );
-
-  const videoRef = useRef(null);
-
-  // Google Translate auto-apply
-  useEffect(() => {
-    if (!preferredLang) return;
-
-    const applyLang = () => {
-      const select = document.querySelector(".goog-te-combo");
-      if (!select) return false;
-
-      if (select.value !== preferredLang) {
-        select.value = preferredLang;
-        select.dispatchEvent(new Event("change"));
-      }
-      return true;
-    };
-
-    if (applyLang()) return;
-
-    const observer = new MutationObserver(() => {
-      if (applyLang()) observer.disconnect();
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, [preferredLang]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -87,11 +58,7 @@ function App() {
 
   return (
     <Router>
-      {/* ✅ FIXED ROOT */}
       <div className={sunlight ? "app sunlight" : "app"}>
-        {/* Google Translate */}
-        <GoogleTranslate lang={preferredLang} />
-
         {/* NAVBAR */}
         <nav className="navbar">
           <div className="nav-left">
@@ -129,8 +96,7 @@ function App() {
 
             {/* LANGUAGE SELECT */}
             <select
-              className="lang-select notranslate"
-              translate="no"
+              className="lang-select"
               value={preferredLang}
               onChange={(e) => {
                 const lang = e.target.value;
@@ -196,7 +162,6 @@ function App() {
               <div className="login-page">
                 <div className="login-card">
                   <h2>👨‍🌾 Farmer Login</h2>
-                  <p>Welcome! Please provide your details to continue.</p>
 
                   <form onSubmit={handleLogin}>
                     <input
@@ -206,31 +171,18 @@ function App() {
                       onChange={(e) => setInputName(e.target.value)}
                     />
 
-                    {/* CLEAN LOGIN LANGUAGE SELECT */}
                     <select
                       value={loginLang}
                       onChange={(e) => setLoginLang(e.target.value)}
                     >
                       <option value="">Select Language</option>
-                      <option value="en">🌍 English</option>
-                      <option value="hi">🇮🇳 हिंदी (Hindi)</option>
-                      <option value="mr">🇮🇳 मराठी (Marathi)</option>
-                      <option value="bn">🇮🇳 বাংলা (Bengali)</option>
-                      <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
-                      <option value="te">🇮🇳 తెలుగు (Telugu)</option>
-                      <option value="gu">🇮🇳 ગુજરાતી (Gujarati)</option>
-                      <option value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
-                      <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
-                      <option value="ml">🇮🇳 മലയാളം (Malayalam)</option>
-                      <option value="or">🇮🇳 ଓଡ଼ିଆ (Odia)</option>
+                      <option value="en">English</option>
+                      <option value="hi">Hindi</option>
+                      <option value="mr">Marathi</option>
                     </select>
 
                     <button type="submit">Login</button>
                   </form>
-
-                  <p className="login-note">
-                    Your preferences will be saved for future visits.
-                  </p>
                 </div>
               </div>
             }
