@@ -14,7 +14,7 @@ We welcome contributors from the NSoC program to collaborate and improve this pr
 
 ### 🧑‍💻 For Contributors
 
-* Pick an issue labeled with `level1`, `level2`, or `level3`
+* Pick an issue labeled with `level1`, `level2`, or `level3` or raise an issue 
 * Ask to be assigned before starting work
 * Submit a Pull Request with **`NSoC'26`** in the title
 * Follow proper contribution guidelines
