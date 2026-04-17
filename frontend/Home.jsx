@@ -265,21 +265,61 @@ export default function Home() {
         </Link>
       </section>
 
-      <footer className="home-footer">
-        <div className="footer-content">
-          <div className="footer-brand">
-            <FaSeedling className="footer-logo" />
-            <span>Fasal Saathi</span>
-          </div>
-          <p>AI-Powered Agricultural Advisor for Indian Farmers</p>
-          <div className="footer-contact">
-            <FaPhoneAlt /> Need help? Call us: +91 98765 43210
-          </div>
-          <p className="footer-copyright">
-            © 2026 Fasal Saathi. All rights reserved. MIT Licensed.
-          </p>
+      
+          <footer className="home-footer">
+  <div className="footer-content">
+    <div className="footer-grid">
+      <div className="footer-section">
+        <div className="footer-brand">
+          <FaSeedling className="footer-logo" />
+          <span>Fasal Saathi</span>
         </div>
-      </footer>
+        <p className="footer-description">
+          AI-powered agricultural advisor helping farmers with crop planning,
+          weather insights, irrigation, and yield optimization.
+        </p>
+        <div className="footer-contact">
+          <FaPhoneAlt />
+          <span>+91 98765 43210</span>
+        </div>
+      </div>
+
+      <div className="footer-section">
+        <h4>Quick Links</h4>
+        <Link to="/">Home</Link>
+        <Link to="/advisor">Advisor</Link>
+        <Link to="/how-it-works">How It Works</Link>
+        <Link to="/dashboard">Dashboard</Link>
+      </div>
+
+      <div className="footer-section">
+        <h4>Resources</h4>
+        <Link to="/crop-guide">Crop Guide</Link>
+        <Link to="/weather">Weather Updates</Link>
+        <Link to="/soil-analysis">Soil Analysis</Link>
+        <Link to="/faq">FAQs</Link>
+      </div>
+
+      <div className="footer-section">
+        <h4>Company</h4>
+        <Link to="/about">About Us</Link>
+        <Link to="/contact">Contact</Link>
+        <Link to="/privacy-policy">Privacy Policy</Link>
+        <Link to="/terms">Terms of Service</Link>
+      </div>
+    </div>
+
+    <div className="footer-bottom">
+      <div className="footer-socials">
+        <FaGlobe />
+        <span>Available Across India</span>
+      </div>
+      <p className="footer-copyright">
+        © 2026 Fasal Saathi. All rights reserved. MIT Licensed.
+      </p>
+    </div>
+  </div>
+</footer>
     </div>
   );
 }
