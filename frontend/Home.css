@@ -65,11 +65,24 @@
   --gradient: #000000;
 }
 
-
 .home {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--dark);
   overflow-x: hidden;
+}
+
+.home-weather-relative-wrap {
+  position: relative;
+  height: 0;
+  z-index: 24;
+  pointer-events: none;
+}
+
+.home-weather-relative-wrap .weather-quick-widget {
+  position: absolute;
+  top: 5px;
+  right: 22px;
+  pointer-events: auto;
 }
 
 .hero-section {
@@ -770,6 +783,10 @@
 
   .hero-copy {
     margin-left: 0;
+  }
+
+  .home-weather-relative-wrap .weather-quick-widget {
+    right: 14px;
   }
 
   .hero-title {

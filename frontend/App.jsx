@@ -2,23 +2,58 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import Advisor from "./Advisor";
-import How from "./How";
 import Home from "./Home";
-import { FaHome, FaComments, FaInfoCircle, FaLeaf, FaBars, FaTimes } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import How from "./How";
+import "./App.css";
+import { FaLeaf, FaHome, FaComments, FaInfoCircle, FaTimes, FaBars } from "react-icons/fa";
 
-// 🔹 ScrollToTop component to fix navigation positioning
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
+
+const LANGUAGE_OPTIONS = [
+  { value: "en", label: "🌍 English" },
+  { value: "hi", label: "🇮🇳 हिंदी" },
+  { value: "mr", label: "🇮🇳 मराठी" },
+  { value: "bn", label: "🇮🇳 বাংলা" },
+  { value: "ta", label: "🇮🇳 தமிழ்" },
+  { value: "te", label: "🇮🇳 తెలుగు" },
+  { value: "gu", label: "🇮🇳 ગુજરાતી" },
+  { value: "pa", label: "🇮🇳 ਪੰਜਾਬੀ" },
+  { value: "kn", label: "🇮🇳 ಕನ್ನಡ" },
+  { value: "ml", label: "🇮🇳 മലയാളം" },
+  { value: "or", label: "🇮🇳 ଓଡ଼ିଆ" },
+  { value: "as", label: "🇮🇳 অসমীয়া" },
+];
+
+const getInitialPreferredLanguage = () => {
+  try {
+    const storedLanguage = localStorage.getItem("preferredLanguage");
+    return LANGUAGE_OPTIONS.some((option) => option.value === storedLanguage)
+      ? storedLanguage
+      : "en";
+  } catch {
+    return "en";
+  }
+};
+
+const applyLanguageToGoogleTranslate = (language) => {
+  const gtCombo = document.querySelector(".goog-te-combo");
+  if (!gtCombo) {
+    return false;
+  }
+
+  gtCombo.value = language;
+  gtCombo.dispatchEvent(new Event("change"));
+  return true;
+};
+
+const syncPreferredLanguage = (language, setPreferredLang) => {
+  setPreferredLang(language);
+  localStorage.setItem("preferredLanguage", language);
+  applyLanguageToGoogleTranslate(language);
+};
+
 
 function App() {
-  const [loginLang, setLoginLang] = useState("");
-  const [showAlert, setShowAlert] = useState(true);
+  const [preferredLang, setPreferredLang] = useState(getInitialPreferredLanguage);
   const [isOpen, setIsOpen] = useState(false);
   const [sunlight, setSunlight] = useState(false);
 
@@ -39,9 +74,6 @@ function App() {
 
   const [name, setName] = useState(localStorage.getItem("farmerName") || "");
   const [inputName, setInputName] = useState("");
-  const [preferredLang, setPreferredLang] = useState(
-    localStorage.getItem("preferredLanguage") || ""
-  );
 
 
   const handleLogin = (e) => {
@@ -52,16 +84,9 @@ function App() {
       return;
     }
 
-    if (!loginLang) {
-      alert("Please select a language");
-      return;
-    }
-
     localStorage.setItem("farmerName", inputName);
-    localStorage.setItem("preferredLanguage", loginLang);
 
     setName(inputName);
-    setPreferredLang(loginLang);
 
     setInputName("");
     window.location.href = "/";
@@ -69,9 +94,7 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("farmerName");
-    localStorage.removeItem("preferredLanguage");
     setName("");
-    setPreferredLang("en");
     window.location.href = "/";
   };
 
@@ -85,9 +108,28 @@ function App() {
     }
   }, [theme]);
 
+  useEffect(() => {
+    if (applyLanguageToGoogleTranslate(preferredLang)) {
+      return;
+    }
+
+    let attempts = 0;
+    const maxAttempts = 20;
+    const retryId = window.setInterval(() => {
+      attempts += 1;
+      const applied = applyLanguageToGoogleTranslate(preferredLang);
+      if (applied || attempts >= maxAttempts) {
+        window.clearInterval(retryId);
+      }
+    }, 300);
+
+    return () => {
+      window.clearInterval(retryId);
+    };
+  }, [preferredLang]);
+
   return (
     <Router>
-      <ScrollToTop />
       <div className={sunlight ? "app sunlight" : "app"}>
 
         {/* Navbar */}
@@ -145,23 +187,14 @@ function App() {
               className="lang-select"
               value={preferredLang}
               onChange={(e) => {
-                const lang = e.target.value;
-                setPreferredLang(lang);
-                localStorage.setItem("preferredLanguage", lang);
+                syncPreferredLanguage(e.target.value, setPreferredLang);
               }}
             >
-              <option value="">Select Language</option>
-              <option value="en">🌍 English</option>
-              <option value="hi">🇮🇳 हिंदी</option>
-              <option value="mr">🇮🇳 मराठी</option>
-              <option value="bn">🇮🇳 বাংলা</option>
-              <option value="ta">🇮🇳 தமிழ்</option>
-              <option value="te">🇮🇳 తెలుగు</option>
-              <option value="gu">🇮🇳 ગુજરાતી</option>
-              <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
-              <option value="kn">🇮🇳 ಕನ್ನಡ</option>
-              <option value="ml">🇮🇳 മലയാളം</option>
-              <option value="or">🇮🇳 ଓଡ଼ିଆ</option>
+              {LANGUAGE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
 
             {/* USER */}
@@ -186,16 +219,6 @@ function App() {
           </button>
         </nav>
 
-        {/* ALERT */}
-        {showAlert && (
-          <div className="alert-bar">
-            🌧️ Weather Alert: Heavy rainfall expected in parts of Maharashtra this evening.
-            <button className="close-btn" onClick={() => setShowAlert(false)}>
-              <FaTimes />
-            </button>
-          </div>
-        )}
-
         {/* ROUTES */}
         <Routes>
           <Route path="/" element={<Home />} />
@@ -218,13 +241,17 @@ function App() {
                     />
 
                     <select
-                      value={loginLang}
-                      onChange={(e) => setLoginLang(e.target.value)}
+                      value={preferredLang}
+                      onChange={(e) => {
+                        syncPreferredLanguage(e.target.value, setPreferredLang);
+                      }}
+                      style={{ marginBottom: "18px" }}
                     >
-                      <option value="">Select Language</option>
-                      <option value="en">English</option>
-                      <option value="hi">Hindi</option>
-                      <option value="mr">Marathi</option>
+                      {LANGUAGE_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
 
                     <button type="submit">Login</button>

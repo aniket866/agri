@@ -13,6 +13,8 @@ import {
   FaLock,
   FaGlobe,
 } from "react-icons/fa";
+import WeatherAlertBar from "./weather/WeatherAlertBar";
+import WeatherQuickWidget from "./weather/WeatherQuickWidget";
 import "./Home.css";
 
 export default function Home() {
@@ -77,6 +79,17 @@ export default function Home() {
   const [statValues, setStatValues] = useState(stats.map(() => 1));
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const navigationEntry = performance.getEntriesByType("navigation")?.[0];
+    if (navigationEntry?.type === "reload") {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  useEffect(() => {
     const duration = 1400;
     const startTime = performance.now();
     let rafId = 0;
@@ -117,6 +130,10 @@ export default function Home() {
 
   return (
     <div className="home">
+      <WeatherAlertBar />
+      <div className="home-weather-relative-wrap">
+        <WeatherQuickWidget />
+      </div>
       <section className="hero-section">
         <div className="hero-bg">
           <div className="hero-pattern"></div>

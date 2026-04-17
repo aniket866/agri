@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Advisor.css";
-import WeatherCard from "./WeatherCard";
+import WeatherCard from "./weather/WeatherCard";
 import SoilChatbot from "./SoilChatbot";
 import {
   Sun,
