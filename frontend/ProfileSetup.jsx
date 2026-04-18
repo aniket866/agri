@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth, db } from "./lib/firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { auth, db, isFirebaseConfigured } from "./lib/firebase";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaGlobe, FaMapMarkerAlt, FaSeedling, FaArrowRight } from "react-icons/fa";
 import "./ProfileSetup.css";
@@ -11,7 +10,7 @@ const LANGUAGE_OPTIONS = [
   { value: "mr", label: "🇮🇳 मराठी" },
   { value: "bn", label: "🇮🇳 বাংলা" },
   { value: "ta", label: "🇮🇳 தமிழ்" },
-  { value: "te", label: "🇮🇳 తెలుగు" },
+  { value: "te", label: "🇮🇳 তেলুগు" },
   { value: "gu", label: "🇮🇳 ગુજરાતી" },
   { value: "pa", label: "🇮🇳 ਪੰਜਾਬੀ" },
   { value: "kn", label: "🇮🇳 ಕನ್ನಡ" },
@@ -32,15 +31,22 @@ const ProfileSetup = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Request location as soon as page opens
+    if (!isFirebaseConfigured()) {
+      navigate("/auth");
+      return;
+    }
     requestLocation();
     
-    // Check if user already has data
     const checkExistingData = async () => {
-      if (auth.currentUser) {
-        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
-        if (userDoc.exists() && userDoc.data().profileCompleted) {
-          navigate("/");
+      if (auth?.currentUser) {
+        try {
+          const { doc, getDoc } = await import("firebase/firestore");
+          const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+          if (userDoc.exists() && userDoc.data().profileCompleted) {
+            navigate("/");
+          }
+        } catch (err) {
+          console.error(err);
         }
       }
     };
@@ -55,7 +61,6 @@ const ProfileSetup = () => {
           const { latitude, longitude } = position.coords;
           setLocation({ lat: latitude, lng: longitude });
 
-          // Reverse Geocoding via BigDataCloud (More reliable for client-side)
           try {
             const response = await fetch(
               `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
@@ -104,8 +109,9 @@ const ProfileSetup = () => {
     }
     setLoading(true);
     try {
-      const user = auth.currentUser;
+      const user = auth?.currentUser;
       if (user) {
+        const { doc, updateDoc } = await import("firebase/firestore");
         await updateDoc(doc(db, "users", user.uid), {
           displayName: name,
           language: language,
@@ -113,87 +119,104 @@ const ProfileSetup = () => {
           location: location,
           address: address,
           profileCompleted: true,
-          updatedAt: new Date().toISOString()
         });
         navigate("/");
       }
     } catch (err) {
-      console.error(err);
-      setError("Failed to save profile. Try again.");
+      setError(err.message || "Failed to save profile");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="setup-container">
-      <div className="setup-card">
-        <div className="setup-header">
-          <FaSeedling className="setup-logo" />
-          <h1>Complete Your Profile</h1>
-          <p>Help us personalize your Fasal Saathi experience</p>
-        </div>
+    <div className="profile-setup-container">
+      <div className="profile-setup-card">
+        <h1>Complete Your Profile</h1>
+        <p className="subtitle">Help us serve you better</p>
 
-        {error && <div className="setup-error">{error}</div>}
+        {error && <div className="error-message">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="setup-form">
-          <div className="setup-group">
-            <label>Farmer Name</label>
-            <div className="setup-input">
-              <FaUser className="setup-icon" />
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>
+              <FaUser /> Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <FaGlobe /> Language
+            </label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              {LANGUAGE_OPTIONS.map((lang) => (
+                <option key={lang.value} value={lang.value}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>
+              <FaSeedling /> Primary Crop
+            </label>
+            <select
+              value={cropType}
+              onChange={(e) => setCropType(e.target.value)}
+              required
+            >
+              <option value="">Select your primary crop</option>
+              <option value="rice">Rice</option>
+              <option value="wheat">Wheat</option>
+              <option value="cotton">Cotton</option>
+              <option value="sugarcane">Sugarcane</option>
+              <option value="maize">Maize</option>
+              <option value="soybean">Soybean</option>
+              <option value="potato">Potato</option>
+              <option value="onion">Onion</option>
+              <option value="tomato">Tomato</option>
+              <option value="vegetables">Vegetables</option>
+              <option value="fruits">Fruits</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>
+              <FaMapMarkerAlt /> Location
+            </label>
+            <div className="location-input">
               <input
                 type="text"
-                placeholder="Full Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder={locLoading ? "Getting location..." : "Enter your location"}
                 required
               />
+              <button
+                type="button"
+                className="location-btn"
+                onClick={requestLocation}
+                disabled={locLoading}
+              >
+                {locLoading ? "..." : "📍"}
+              </button>
             </div>
           </div>
 
-          <div className="setup-group">
-            <label>Preferred Language</label>
-            <div className="setup-input">
-              <FaGlobe className="setup-icon" />
-              <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-                {LANGUAGE_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="setup-group">
-            <label>Primary Crop Type</label>
-            <div className="setup-input">
-              <FaSeedling className="setup-icon" />
-              <input
-                type="text"
-                placeholder="e.g. Rice, Wheat, Cotton"
-                value={cropType}
-                onChange={(e) => setCropType(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="setup-group">
-            <label>Farm Location</label>
-            <div className={`loc-box ${address ? 'success' : 'pending'}`}>
-              <FaMapMarkerAlt />
-              <span>
-                {locLoading ? "Detecting location..." : 
-                 address ? `Location: ${address}` : 
-                 "Location not found"}
-              </span>
-              {!address && !locLoading && (
-                <button type="button" onClick={requestLocation}>Retry</button>
-              )}
-            </div>
-          </div>
-
-          <button type="submit" className="setup-submit" disabled={loading || !address}>
-            {loading ? "Saving..." : "Start Journey"}
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Complete Profile"}
             <FaArrowRight />
           </button>
         </form>

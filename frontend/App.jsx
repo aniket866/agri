@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
 import { 
   FaHome, 
   FaComments, 
@@ -23,7 +21,7 @@ import ProfileSetup from "./ProfileSetup";
 import LanguageDropdown from "./LanguageDropdown";
 import useNotifications from "./Notifications";
 
-import { auth, db } from "./lib/firebase";
+import { auth, db, isFirebaseConfigured } from "./lib/firebase";
 
 import "./App.css";
 
@@ -99,10 +97,14 @@ function App() {
 
   /* ---------------- AUTH & FIRESTORE SYNC ---------------- */
   useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+    if (!isFirebaseConfigured()) {
+      setLoading(false);
+      return;
+    }
+    const unsubscribeAuth = auth?.onAuthStateChanged ? auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const unsubscribeDoc = onSnapshot(doc(db, "users", currentUser.uid), (userDoc) => {
+        const unsubscribeDoc = db && onSnapshot(doc(db, "users", currentUser.uid), (userDoc) => {
           if (userDoc.exists()) {
             const data = userDoc.data();
             setUserData(data);
@@ -116,22 +118,24 @@ function App() {
           console.error("Firestore sync error:", error);
           setLoading(false);
         });
-        return () => unsubscribeDoc();
+        return () => unsubscribeDoc?.();
       } else {
         setUserData(null);
         setProfileCompleted(true);
         setLoading(false);
       }
-    });
+    }) : () => {};
     return () => unsubscribeAuth();
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Sign out error:", error);
+    if (auth) {
+      try {
+        await auth.signOut();
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Sign out error:", error);
+      }
     }
   };
 

@@ -15,8 +15,7 @@ import {
 } from "react-icons/fa";
 import WeatherAlertBar from "./weather/WeatherAlertBar";
 import WeatherQuickWidget from "./weather/WeatherQuickWidget";
-import { auth } from "./lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { auth, isFirebaseConfigured } from "./lib/firebase";
 import "./Home.css";
 
 export default function Home() {
@@ -82,9 +81,13 @@ export default function Home() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
+    if (!isFirebaseConfigured()) {
+      setUser(null);
+      return;
+    }
+    const unsubscribe = auth?.onAuthStateChanged ? auth.onAuthStateChanged((u) => {
       setUser(u);
-    });
+    }) : () => {};
     return () => unsubscribe();
   }, []);
 
