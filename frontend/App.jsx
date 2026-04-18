@@ -157,6 +157,11 @@ function App() {
                 <FaLeaf className="icon" /> Crop Guide
               </Link>
             </li>
+            <li>
+      <Link to="/resources" onClick={() => setIsOpen(false)}>
+                Resources
+      </Link>
+      </li>
           </ul>
 
           <div className="nav-right">
