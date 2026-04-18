@@ -5,6 +5,8 @@ import Advisor from "./Advisor";
 import Home from "./Home";
 import Resources from "./Resources";
 import CropGuide from "./CropGuide";
+import { ToastContainer } from "react-toastify";
+import useNotifications from "./Notifications";
 import {
   FaHome,
   FaComments,
@@ -69,6 +71,8 @@ const syncLanguage = (lang, setLang) => {
 function App() {
   const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
   const [isOpen, setIsOpen] = useState(false);
+  const [sunlight, setSunlight] = useState(false); 
+  useNotifications();
 
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
@@ -159,6 +163,10 @@ function App() {
               </Link>
             </li>
             <li>
+              <Link to="/crop-guide" onClick={() => setIsOpen(false)}>
+                <FaLeaf className="icon" /> Crop Guide
+              </Link>
+            </li>
       <Link to="/resources" onClick={() => setIsOpen(false)}>
                 Resources
       </Link>
@@ -227,6 +235,8 @@ function App() {
           />
         </Routes>
       </div>
+
+       <ToastContainer />
     </Router>
   );
 }
