@@ -14,6 +14,8 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import How from "./How";
+import { FaLeaf, FaHome, FaComments, FaInfoCircle, FaTimes, FaBars } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 import "./App.css";
 
@@ -135,18 +137,49 @@ function App() {
             </Link>
           </div>
 
+      <ul className={`nav-links ${isOpen ? "active" : ""}`}>            <li>
+              <NavLink
+                to="/"
+                end
+                onClick={() => setIsOpen(false)}
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <FaHome className="icon" /> Home
+              </NavLink>
           <ul className={`nav-center ${isOpen ? "active" : ""}`}>
             <li>
               <Link to="/" onClick={() => setIsOpen(false)}>
                 <FaHome /> Home
               </Link>
             </li>
+
             <li>
+              <NavLink
+                to="/advisor"
+                onClick={() => setIsOpen(false)}
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <FaComments className="icon" /> Chat
+              </NavLink>
               <Link to="/advisor" onClick={() => setIsOpen(false)}>
                 <FaComments /> Chat
               </Link>
             </li>
+
             <li>
+              <NavLink
+                to="/how-it-works"
+                onClick={() => setIsOpen(false)}
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <FaInfoCircle className="icon" /> How It Works
+              </NavLink>
               <Link to="/how-it-works" onClick={() => setIsOpen(false)}>
                 <FaInfoCircle /> How It Works
               </Link>
