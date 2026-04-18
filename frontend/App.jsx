@@ -17,15 +17,6 @@ import How from "./How";
 
 import "./App.css";
 
-import {
-  FaLeaf,
-  FaHome,
-  FaComments,
-  FaInfoCircle,
-  FaTimes,
-  FaBars,
-} from "react-icons/fa";
-
 /* ---------------- LANGUAGE ---------------- */
 
 const LANGUAGE_OPTIONS = [
