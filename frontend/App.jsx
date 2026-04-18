@@ -1,3 +1,5 @@
+import GoogleTranslate from "./GoogleTranslate";
+import React, { useState, useRef, useEffect } from "react";
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
@@ -80,6 +82,31 @@ function App() {
     setThemeAnimNonce((n) => n + 1);
   };
 
+  // Auto-apply preferred language using Google Translate
+  useEffect(() => {
+    if (!preferredLang) return;
+
+    const applyLang = () => {
+      const select = document.querySelector(".goog-te-combo");
+      if (!select) return false;
+
+      if (select.value !== preferredLang) {
+        select.value = preferredLang;
+        select.dispatchEvent(new Event("change"));
+      }
+      return true;
+    };
+
+    if (applyLang()) return;
+
+    const observer = new MutationObserver(() => {
+      if (applyLang()) observer.disconnect();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [preferredLang]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -134,6 +161,9 @@ function App() {
   }, [preferredLang]);
 
   return (
+  <Router>
+    <GoogleTranslate lang={preferredLang} />
+      <div className={sunlight ? "app sunlight" : "app"}>
     <Router>
       <div className="app">
 
@@ -182,7 +212,8 @@ function App() {
             {/* Language Dropdown */}
             {/* LANGUAGE SELECT */}
             <select
-              className="lang-select"
+              className="lang-select notranslate"
+              translate="no"
               value={preferredLang}
               onChange={(e) => {
                 syncPreferredLanguage(e.target.value, setPreferredLang);
@@ -201,13 +232,11 @@ function App() {
                 <>
                   👋 Welcome, {name}!
                   <button className="logout-btn" onClick={handleLogout}>
-                    Logout
+                    Change User
                   </button>
                 </>
               ) : (
-                <Link to="/login" onClick={() => setIsOpen(false)}>
-                  Login
-                </Link>
+                <Link to="/login">Get Started</Link>
               )}
             </div>
           </div>
