@@ -1,11 +1,12 @@
-import GoogleTranslate from "./GoogleTranslate";
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-import "./App.css";
+import GoogleTranslate from "./GoogleTranslate";
 import Advisor from "./Advisor";
 import Home from "./Home";
 import How from "./How";
+
+import "./App.css";
 
 import {
   FaLeaf,
@@ -33,16 +34,18 @@ const LANGUAGE_OPTIONS = [
   { value: "as", label: "🇮🇳 অসমীয়া" },
 ];
 
-const getInitialPreferredLanguage = () => {
+const getInitialLanguage = () => {
   try {
     const stored = localStorage.getItem("preferredLanguage");
-    return LANGUAGE_OPTIONS.some((l) => l.value === stored) ? stored : "en";
+    return LANGUAGE_OPTIONS.some((l) => l.value === stored)
+      ? stored
+      : "en";
   } catch {
     return "en";
   }
 };
 
-const applyLanguageToGoogleTranslate = (lang) => {
+const applyGoogleTranslate = (lang) => {
   const el = document.querySelector(".goog-te-combo");
   if (!el) return false;
 
@@ -51,44 +54,55 @@ const applyLanguageToGoogleTranslate = (lang) => {
   return true;
 };
 
-const syncPreferredLanguage = (lang, setLang) => {
+const syncLanguage = (lang, setLang) => {
   setLang(lang);
   localStorage.setItem("preferredLanguage", lang);
-  applyLanguageToGoogleTranslate(lang);
+  applyGoogleTranslate(lang);
 };
 
 /* ---------------- APP ---------------- */
 
 function App() {
-  const [preferredLang, setPreferredLang] = useState(getInitialPreferredLanguage);
+  const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "light";
+  });
+
   const [themeAnimNonce, setThemeAnimNonce] = useState(0);
 
   const [name, setName] = useState(localStorage.getItem("farmerName") || "");
   const [inputName, setInputName] = useState("");
 
-  /* APPLY THEME */
+  /* ---------------- THEME ---------------- */
   useEffect(() => {
-    document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    document.documentElement.classList.toggle(
+      "theme-dark",
+      theme === "dark"
+    );
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  /* APPLY LANGUAGE */
+  /* ---------------- LANGUAGE AUTO APPLY ---------------- */
   useEffect(() => {
-    if (applyLanguageToGoogleTranslate(preferredLang)) return;
+    if (applyGoogleTranslate(preferredLang)) return;
 
     const id = setInterval(() => {
-      if (applyLanguageToGoogleTranslate(preferredLang)) clearInterval(id);
+      if (applyGoogleTranslate(preferredLang)) clearInterval(id);
     }, 300);
 
     return () => clearInterval(id);
   }, [preferredLang]);
 
-  /* LOGIN */
+  /* ---------------- LOGIN ---------------- */
   const handleLogin = (e) => {
     e.preventDefault();
-    if (!inputName.trim()) return alert("Name is required");
+
+    if (!inputName.trim()) {
+      alert("Name is required");
+      return;
+    }
 
     localStorage.setItem("farmerName", inputName);
     setName(inputName);
@@ -112,6 +126,7 @@ function App() {
   return (
     <Router>
       <div className={`app ${theme === "dark" ? "theme-dark" : ""}`}>
+
         <GoogleTranslate lang={preferredLang} />
 
         {/* NAVBAR */}
@@ -150,7 +165,7 @@ function App() {
               className="lang-select notranslate"
               value={preferredLang}
               onChange={(e) =>
-                syncPreferredLanguage(e.target.value, setPreferredLang)
+                syncLanguage(e.target.value, setPreferredLang)
               }
             >
               {LANGUAGE_OPTIONS.map((l) => (
@@ -172,7 +187,10 @@ function App() {
             </div>
           </div>
 
-          <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
+          <button
+            className="hamburger"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
         </nav>
@@ -192,9 +210,10 @@ function App() {
 
                   <form onSubmit={handleLogin}>
                     <input
+                      type="text"
+                      placeholder="Enter your name"
                       value={inputName}
                       onChange={(e) => setInputName(e.target.value)}
-                      placeholder="Enter your name"
                     />
 
                     <button type="submit">Login</button>
