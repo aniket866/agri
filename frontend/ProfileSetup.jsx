@@ -130,94 +130,123 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="profile-setup-container">
-      <div className="profile-setup-card">
-        <h1>Complete Your Profile</h1>
-        <p className="subtitle">Help us serve you better</p>
+    <div className="setup-container">
+      <div className="setup-card">
+        <div className="setup-header">
+          <div className="setup-logo">🌱</div>
+          <h1>Welcome to Fasal Saathi</h1>
+          <p>Help us serve you better</p>
+        </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="setup-error">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form onSubmit={handleSubmit} className="setup-form">
+          <div className="setup-group">
             <label>
-              <FaUser /> Name
+              <FaUser /> Your Name
             </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>
-              <FaGlobe /> Language
-            </label>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              {LANGUAGE_OPTIONS.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>
-              <FaSeedling /> Primary Crop
-            </label>
-            <select
-              value={cropType}
-              onChange={(e) => setCropType(e.target.value)}
-              required
-            >
-              <option value="">Select your primary crop</option>
-              <option value="rice">Rice</option>
-              <option value="wheat">Wheat</option>
-              <option value="cotton">Cotton</option>
-              <option value="sugarcane">Sugarcane</option>
-              <option value="maize">Maize</option>
-              <option value="soybean">Soybean</option>
-              <option value="potato">Potato</option>
-              <option value="onion">Onion</option>
-              <option value="tomato">Tomato</option>
-              <option value="vegetables">Vegetables</option>
-              <option value="fruits">Fruits</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>
-              <FaMapMarkerAlt /> Location
-            </label>
-            <div className="location-input">
+            <div className="setup-input">
+              <FaUser className="setup-icon" />
               <input
                 type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder={locLoading ? "Getting location..." : "Enter your location"}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
+                className="setup-input"
                 required
               />
-              <button
-                type="button"
-                className="location-btn"
-                onClick={requestLocation}
-                disabled={locLoading}
-              >
-                {locLoading ? "..." : "📍"}
-              </button>
             </div>
           </div>
 
-          <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? "Saving..." : "Complete Profile"}
-            <FaArrowRight />
+          <div className="setup-group">
+            <label>
+              <FaGlobe /> Preferred Language
+            </label>
+            <div className="setup-input">
+              <FaGlobe className="setup-icon" />
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="setup-input"
+              >
+                {LANGUAGE_OPTIONS.map((lang) => (
+                  <option key={lang.value} value={lang.value}>
+                    {lang.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="setup-group">
+            <label>
+              <FaSeedling /> Primary Crop You Grow
+            </label>
+            <div className="setup-input">
+              <FaSeedling className="setup-icon" />
+              <select
+                value={cropType}
+                onChange={(e) => setCropType(e.target.value)}
+                className="setup-input"
+                required
+              >
+                <option value="">Select your primary crop</option>
+                <option value="rice">🌾 Rice</option>
+                <option value="wheat">🌾 Wheat</option>
+                <option value="cotton">🌿 Cotton</option>
+                <option value="sugarcane">🎋 Sugarcane</option>
+                <option value="maize">🌽 Maize</option>
+                <option value="soybean">🫘 Soybean</option>
+                <option value="potato">🥔 Potato</option>
+                <option value="onion">🧅 Onion</option>
+                <option value="tomato">🍅 Tomato</option>
+                <option value="vegetables">🥬 Vegetables</option>
+                <option value="fruits">🍎 Fruits</option>
+                <option value="other">🌱 Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="setup-group">
+            <label>
+              <FaMapMarkerAlt /> Your Location
+            </label>
+            <div className={`loc-box ${address ? 'success' : locLoading ? 'pending' : ''}`}>
+              {locLoading ? (
+                <>
+                  <span>📍 Getting your location...</span>
+                  <span className="loading-spinner"></span>
+                </>
+              ) : address ? (
+                <>
+                  <span>✅ {address}</span>
+                  <button type="button" onClick={requestLocation} className="loc-btn">
+                    Update
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span>Click to get your location</span>
+                  <button type="button" onClick={requestLocation} className="loc-btn">
+                    Get Location
+                  </button>
+                </>
+              )}
+            </div>
+            <input
+              type="hidden"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+            <input
+              type="hidden"
+              value={location ? JSON.stringify(location) : ""}
+            />
+          </div>
+
+          <button type="submit" className="setup-submit" disabled={loading}>
+            {loading ? "Saving..." : "Complete Setup"}
+            {!loading && <FaArrowRight />}
           </button>
         </form>
       </div>
