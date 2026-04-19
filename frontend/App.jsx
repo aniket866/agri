@@ -1,3 +1,5 @@
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { 
@@ -140,7 +142,7 @@ function App() {
   };
 
   const handleThemeToggle = () => {
-    setTheme((t) => (t === "dark" ? "light" : "dark"));
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
