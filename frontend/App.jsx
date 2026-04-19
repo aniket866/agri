@@ -21,7 +21,7 @@ import ProfileSetup from "./ProfileSetup";
 import LanguageDropdown from "./LanguageDropdown";
 import useNotifications from "./Notifications";
 
-import { auth, db, isFirebaseConfigured } from "./lib/firebase";
+import { auth, db, onSnapshot, doc, isFirebaseConfigured } from "./lib/firebase";
 
 import "./App.css";
 

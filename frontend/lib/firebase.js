@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc, onSnapshot, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
@@ -33,5 +33,5 @@ if (isConfigured) {
   console.warn("Firebase not configured - missing API key");
 }
 
-export { app, auth, db };
+export { app, auth, db, doc, onSnapshot, getDoc, setDoc, updateDoc };
 export const isFirebaseConfigured = () => isConfigured;

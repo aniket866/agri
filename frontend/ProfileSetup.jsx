@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth, db, isFirebaseConfigured } from "./lib/firebase";
+import { auth, db, doc, getDoc, updateDoc, isFirebaseConfigured } from "./lib/firebase";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaGlobe, FaMapMarkerAlt, FaSeedling, FaArrowRight } from "react-icons/fa";
 import "./ProfileSetup.css";

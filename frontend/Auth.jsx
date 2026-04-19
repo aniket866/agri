@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaGoogle, FaEnvelope, FaLock, FaUser, FaArrowRight, FaLeaf } from "react-icons/fa";
-import { auth, db, isFirebaseConfigured } from "./lib/firebase";
+import { auth, db, doc, getDoc, setDoc, isFirebaseConfigured } from "./lib/firebase";
 import "./Auth.css";
 
 const Auth = () => {
