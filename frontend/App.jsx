@@ -85,8 +85,7 @@ const syncLanguage = (lang, setLang) => {
 
 function App() {
   const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
-  const [loginLang, setLoginLang] = useState("");
-  const [showAlert, setShowAlert] = useState(true);
+
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
   const [user, setUser] = useState(null);
@@ -105,6 +104,14 @@ function App() {
   }, [theme]);
 
   /* ---------------- LANGUAGE AUTO-TRANS ---------------- */
+  useEffect(() => {
+    if (applyGoogleTranslate(preferredLang)) return;
+    const id = setInterval(() => {
+      if (applyGoogleTranslate(preferredLang)) clearInterval(id);
+    }, 300);
+    return () => clearInterval(id);
+  }, [preferredLang]);
+
    useEffect(() => {
     setGoogleTranslateCookie(preferredLang);
 

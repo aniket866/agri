@@ -656,6 +656,7 @@ body.translated-rtl {
   box-shadow: none !important;
 }
 
+
 /* Fix white space issues caused by Google Translate toolbar */
 body > .goog-te-banner-frame,
 html > .goog-te-banner-frame {
