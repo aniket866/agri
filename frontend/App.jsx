@@ -24,6 +24,7 @@ import useNotifications from "./Notifications";
 import { auth, db, onSnapshot, doc, isFirebaseConfigured } from "./lib/firebase";
 
 import "./App.css";
+import "./themes/sunlight.css";
 
 /* ---------------- LANGUAGE options ---------------- */
 
