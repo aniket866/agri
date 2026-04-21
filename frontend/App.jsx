@@ -23,9 +23,9 @@ import ProfileSetup from "./ProfileSetup";
 import LanguageDropdown from "./LanguageDropdown";
 import useNotifications from "./Notifications";
 import Schemes from "./GovernmentSchemes";
+import Calendar from "./FarmingCalendar";
 import Feedback from "./Feedback";
 import AdminFeedback from "./AdminFeedback";
-import Calendar from "./FarmingCalendar";
 
 import { auth, db, isFirebaseConfigured } from "./lib/firebase";
 
@@ -46,7 +46,7 @@ const LANGUAGE_OPTIONS = [
   { value: "kn", label: "🇮🇳 ಕನ್ನಡ", englishName: "kannada" },
   { value: "ml", label: "🇮🇳 മലയാളം", englishName: "malayalam" },
   { value: "or", label: "🇮🇳 ଓଡ଼ିଆ", englishName: "odia" },
-b  { value: "as", label: "🇮🇳 অসমୀया", englishName: "assamese" },
+  { value: "as", label: "🇮🇳 অসমୀয়া", englishName: "assamese" },
 ];
 
 const getInitialLanguage = () => {
@@ -221,6 +221,11 @@ function App() {
     }
   };
 
+
+  /* ---------------- AUTH STATE LISTENER ---------------- */
+
+
+
   /* ---------------- OFFLINE STATUS ---------------- */
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
@@ -351,8 +356,8 @@ function App() {
         <Route path="/login" element={<Auth />} />
         <Route path="/profile-setup" element={<ProfileSetup user={user} profileCompleted={profileCompleted} />} />
         <Route path="/calendar" element={<Calendar />} />
-        <Route path="/share-feedback" element={<Feedback />} />
         <Route path="/admin/feedback" element={<AdminFeedback />} />
+        <Route path="/share-feedback" element={<Feedback />} />
       </Routes>
 
       <ToastContainer position="bottom-right" />
