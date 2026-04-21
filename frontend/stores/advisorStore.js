@@ -25,6 +25,9 @@ export const useAdvisorStore = create((set) => ({
   showIrrigation: false,
   setShowIrrigation: (show) => set({ showIrrigation: show }),
 
+  showProfitCalculator: false,
+  setShowProfitCalculator: (show) => set({ showProfitCalculator: show }),
+
   // Reset store
   resetAdvisorStore: () =>
     set({

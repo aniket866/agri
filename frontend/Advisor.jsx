@@ -3,6 +3,7 @@ import "./Advisor.css";
 import WeatherCard from "./weather/WeatherCard";
 import SoilChatbot from "./SoilChatbot";
 import IrrigationGuidance from "./IrrigationGuidance";
+import CropProfitCalculator from "./CropProfitCalculator";
 import {
   Sun,
   Droplets,
@@ -36,6 +37,8 @@ export default function Advisor() {
     setShowComingSoon,
     showIrrigation,
     setShowIrrigation,
+    showProfitCalculator,
+    setShowProfitCalculator,
   } = useAdvisorStore();
 
   const {
@@ -200,6 +203,12 @@ export default function Advisor() {
             </div>
             <h3>Govt Schemes</h3>
             <p>Direct subsidies, insurance, and financial benefits for farmers.</p>
+          </div>
+
+          <div className="card reveal" onClick={() => setShowProfitCalculator(true)}>
+            <div className="icon">💰</div>
+            <h3>Profit Calculator</h3>
+            <p>Calculate your crop profits and ROI before planting.</p>
           </div>
 
           <div className="card reveal" onClick={() => navigate("/calendar")}>
@@ -517,6 +526,20 @@ export default function Advisor() {
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {showProfitCalculator && (
+        <div className="weather-overlay" onClick={()=>{setShowProfitCalculator(false)}}>
+          <div className="weather-popup profit-popup" onClick={(e)=>e.stopPropagation()}>
+            <CropProfitCalculator />
+            <button
+              className="close-btn"
+              onClick={() => setShowProfitCalculator(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
