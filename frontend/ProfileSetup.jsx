@@ -32,6 +32,21 @@ const ProfileSetup = ({ user, profileCompleted }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // If auth state is resolved and user is not logged in, go to login
+    if (user === null && !loading) {
+      navigate("/login");
+      return;
+    }
+    
+    // If profile is already completed, go home
+    if (user && profileCompleted) {
+      navigate("/");
+    }
+  }, [user, profileCompleted, navigate]);
+
+  useEffect(() => {
+    requestLocation();
+  }, []);
     if (!isFirebaseConfigured()) {
       navigate("/login");
       return;

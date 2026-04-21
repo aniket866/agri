@@ -13,8 +13,8 @@ import {
   FaLock,
   FaGlobe,
   FaLandmark,
-  FaCommentDots,
   FaCalendarAlt,
+  FaCommentDots
 } from "react-icons/fa";
 import WeatherAlertBar from "./weather/WeatherAlertBar";
 import WeatherQuickWidget from "./weather/WeatherQuickWidget";
@@ -376,6 +376,7 @@ export default function Home({ user }) {
               <Link to="/advisor">Advisor</Link>
               <Link to="/how-it-works">How It Works</Link>
               <Link to="/schemes">Govt Schemes</Link>
+              <Link to="/dashboard">Dashboard</Link>
               <Link to="/calendar">Activity Calendar</Link>
               <Link to="/feedback">Share Feedback</Link>
             </div>
