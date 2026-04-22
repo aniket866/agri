@@ -94,32 +94,28 @@ function App() {
 
   useNotifications();
 
-  /* ---------------- THEME SYSTEM ---------------- */
-  const [isDarkTheme, setIsDarkTheme] = useState(() => {
-    try {
-      return (localStorage.getItem("theme") || "light") === "dark";
-    } catch {
-      return false;
-    }
-  });
+   /* ---------------- THEME SYSTEM ---------------- */
+   const [isDarkTheme, setIsDarkTheme] = useState(() => {
+     try {
+       return (localStorage.getItem("theme") || "light") === "dark";
+     } catch {
+       return false;
+     }
+   });
 
-  useEffect(() => {
-    document.documentElement.classList.toggle(
-      "theme-dark",
-      theme === "dark"
-    );
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+   useEffect(() => {
+     document.documentElement.classList.toggle("theme-dark", isDarkTheme);
+     localStorage.setItem("theme", isDarkTheme ? "dark" : "light");
+   }, [isDarkTheme]);
+
+   const handleThemeToggle = () => {
+     setIsDarkTheme(!isDarkTheme);
+   };
 
 
-  useEffect(() => {
-    setGoogleTranslateCookie(preferredLang);
-    if (applyGoogleTranslate(preferredLang)) return;
-    const id = setInterval(() => {
-      if (applyGoogleTranslate(preferredLang)) clearInterval(id);
-    }, 500);
-    return () => clearInterval(id);
-  }, [preferredLang]);
+   useEffect(() => {
+     setGoogleTranslateCookie(preferredLang);
+   }, [preferredLang]);
 
   useEffect(() => {
     const cleanupGoogleTranslate = () => {
@@ -270,18 +266,19 @@ function App() {
 
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-  useEffect(() => {
-    const handleNetworkChange = () => setIsOffline(!navigator.onLine);
-    window.addEventListener("online", handleNetworkChange);
-    window.addEventListener("offline", handleNetworkChange);
+   useEffect(() => {
+     const handleNetworkChange = () => setIsOffline(!navigator.onLine);
+     window.addEventListener("online", handleNetworkChange);
+     window.addEventListener("offline", handleNetworkChange);
 
-    const interval = setInterval(handleNetworkChange, 1000);
+     const interval = setInterval(handleNetworkChange, 1000);
 
-    return () => {
-      window.removeEventListener("online", handleNetworkChange);
-      window.removeEventListener("offline", handleNetworkChange);
-    };
-  }, []);
+     return () => {
+       window.removeEventListener("online", handleNetworkChange);
+       window.removeEventListener("offline", handleNetworkChange);
+       clearInterval(interval);
+     };
+   }, []);
 
   return (
     <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>

@@ -21,6 +21,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAdvisorStore } from "./stores/advisorStore";
 import { useYieldPrediction } from "./hooks/useYieldPrediction";
+import CropDiseaseDetection from "./CropDiseaseDetection";
 
 export default function Advisor() {
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ export default function Advisor() {
     setShowProfitCalculator,
     showFarmingMap,
     setShowFarmingMap,
+    showCropDiseaseDetection,
+    setShowCropDiseaseDetection,
   } = useAdvisorStore();
 
   const {
@@ -171,7 +174,7 @@ export default function Advisor() {
           </div>
 
           {/* Crop Disease Detection */}
-          <div className="card reveal" onClick={() => setShowComingSoon(true)}>
+          <div className="card reveal" onClick={() => setShowCropDiseaseDetection(true)}>
             <div className="icon">🌿</div>
             <h3>Crop Disease Detection</h3>
             <p>Upload plant images to detect diseases and get remedies.</p>
@@ -570,6 +573,14 @@ export default function Advisor() {
               Close
             </button>
             <FarmingMap />
+          </div>
+        </div>
+      )}
+
+      {showCropDiseaseDetection && (
+        <div className="weather-overlay" onClick={() => setShowCropDiseaseDetection(false)}>
+          <div className="weather-popup" onClick={(e) => e.stopPropagation()}>
+            <CropDiseaseDetection onClose={() => setShowCropDiseaseDetection(false)} />
           </div>
         </div>
       )}

@@ -1,15 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function CropDiseaseDetection() {
+export default function CropDiseaseDetection({ onClose }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Cleanup object URL on unmount or when image changes
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        onClose?.();
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    // Revoke previous preview URL to avoid memory leak
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
     setImage(file);
     setPreview(URL.createObjectURL(file));
     setResult(null);
@@ -21,6 +45,13 @@ export default function CropDiseaseDetection() {
     setLoading(true);
     setError(null);
 
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+      setError("API key is missing. Please configure VITE_GEMINI_API_KEY.");
+      setLoading(false);
+      return;
+    }
+
     const toBase64 = (file) =>
       new Promise((res, rej) => {
         const reader = new FileReader();
@@ -29,7 +60,15 @@ export default function CropDiseaseDetection() {
         reader.readAsDataURL(file);
       });
 
-    const base64 = await toBase64(image);
+    let base64;
+    try {
+      base64 = await toBase64(image);
+    } catch (error) {
+      console.error("Image read error:", error);
+      setError("Failed to read image. Please try another file.");
+      setLoading(false);
+      return;
+    }
 
     const prompt = `You are an expert agricultural scientist. 
     Analyze this crop image and identify:
@@ -48,7 +87,8 @@ export default function CropDiseaseDetection() {
 
     try {
       const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -62,23 +102,46 @@ export default function CropDiseaseDetection() {
         }
       );
 
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `HTTP error ${response.status}`);
+      }
+
       const data = await response.json();
-      const text = data.candidates[0].content.parts[0].text;
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) {
+        throw new Error("Invalid response from AI service");
+      }
       const clean = text.replace(/```json|```/g, "").trim();
       const parsed = JSON.parse(clean);
       setResult(parsed);
     } catch (err) {
-      setError("Detection failed. Please try again.");
+      console.error("Disease detection error:", err);
+      setError(err.message || "Detection failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: "500px", margin: "40px auto", padding: "24px", 
-      background: "#fff", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
-      
-      <h2 style={{ color: "#16a34a", marginBottom: "20px", fontSize: "24px" }}>
+    <div style={{ 
+      maxWidth: "500px", 
+      margin: "40px auto", 
+      padding: "24px", 
+      background: "#fff", 
+      borderRadius: "16px", 
+      boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+      position: "relative"
+    }}>
+      <button
+        className="close-btn"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        ✕
+      </button>
+
+      <h2 style={{ color: "#16a34a", marginBottom: "20px", fontSize: "24px", paddingRight: "40px" }}>
         🌿 Crop Disease Detection
       </h2>
 
