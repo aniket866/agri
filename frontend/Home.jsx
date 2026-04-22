@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
   FaSeedling,
   FaSun,
@@ -246,6 +247,7 @@ export default function Home({ user }) {
               <Link to="/how-it-works" className="btn-secondary">
                 Learn More
               </Link>
+              
             </div>
           </div>
           <div className="hero-stats">
