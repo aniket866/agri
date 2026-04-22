@@ -4,6 +4,7 @@ import WeatherCard from "./weather/WeatherCard";
 import SoilChatbot from "./SoilChatbot";
 import IrrigationGuidance from "./IrrigationGuidance";
 import CropProfitCalculator from "./CropProfitCalculator";
+import FarmingMap from "./FarmingMap";
 import {
   Sun,
   Droplets,
@@ -15,6 +16,7 @@ import {
   Calendar,
   MessageSquare,
   Info,
+  Map,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAdvisorStore } from "./stores/advisorStore";
@@ -24,7 +26,7 @@ export default function Advisor() {
   const navigate = useNavigate();
   const {
     farmers,
-    setCarmers,
+    setFarmers,
     crops,
     setCrops,
     languages,
@@ -39,6 +41,8 @@ export default function Advisor() {
     setShowIrrigation,
     showProfitCalculator,
     setShowProfitCalculator,
+    showFarmingMap,
+    setShowFarmingMap,
   } = useAdvisorStore();
 
   const {
@@ -59,12 +63,12 @@ export default function Advisor() {
       c = 0,
       l = 0;
     const interval = setInterval(() => {
-      if (f < 5000) setCarmers((f += 50));
+      if (f < 5000) setFarmers((f += 50));
       if (c < 120) setCrops((c += 2));
       if (l < 10) setLanguages((l += 1));
     }, 50);
     return () => clearInterval(interval);
-  }, [setCarmers, setCrops, setLanguages]);
+  }, [setFarmers, setCrops, setLanguages]);
 
   return (
     <section className="advisor">
@@ -209,6 +213,18 @@ export default function Advisor() {
             <div className="icon">💰</div>
             <h3>Profit Calculator</h3>
             <p>Calculate your crop profits and ROI before planting.</p>
+          </div>
+
+          <div
+            className="card reveal"
+            style={{ cursor: "pointer" }}
+            onClick={() => setShowFarmingMap(true)}
+          >
+            <div className="icon">
+              <Map size={32} strokeWidth={2} />
+            </div>
+            <h3>Farming Map</h3>
+            <p>View your fields, weather data, and crop locations on an interactive map.</p>
           </div>
 
           <div className="card reveal" onClick={() => navigate("/calendar")}>
@@ -540,6 +556,20 @@ export default function Advisor() {
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+
+      {showFarmingMap && (
+        <div className="farming-map-overlay" onClick={() => setShowFarmingMap(false)}>
+          <div className="farming-map-popup" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="close-btn"
+              onClick={() => setShowFarmingMap(false)}
+            >
+              Close
+            </button>
+            <FarmingMap />
           </div>
         </div>
       )}
