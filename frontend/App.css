@@ -18,9 +18,13 @@ body {
   position: relative !important;
 }
 
-html {
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
   margin: 0;
-  padding: 0;
+  box-sizing: border-box;
 }
 
 #root {
@@ -55,14 +59,6 @@ html {
   --primary-light: #66bb6a;
   --bg-light: #ffffff;
   --bg-dark: #121212;
-}
-html,
-body,
-#root {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  box-sizing: border-box;
 }
 
 .app {
@@ -735,37 +731,9 @@ html body {
 }
 
 
-.sunlight .sunlight-toggle {
-  background: #000;
-  color: #fff;
-  border: 3px solid #000;
-  border-radius: 4px;
-}
+
 
 /* Google Translate overrides */
-iframe.goog-te-banner-frame.skiptranslate {
-  display: none;
-}
-.goog-te-banner-frame {
-  display: none;
-}
-#google_translate_element {
-  top: 0;
-  margin-top: 0;
-}
-
-/* Hide original text hover popup */
-.goog-tooltip {
-  display: none;
-}
-.goog-tooltip:hover {
-  display: none;
-}
-.goog-text-highlight {
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
-}
 
 .btn-logout-alt:hover {
   background: #fef2f2;
@@ -987,4 +955,17 @@ iframe.goog-te-banner-frame.skiptranslate {
 
 .theme-dark .offline-banner {
   background: #f57c00;
+}
+
+.nav-loader-mini {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: nav-spin 0.8s linear infinite;
+}
+
+@keyframes nav-spin {
+  to { transform: rotate(360deg); }
 }

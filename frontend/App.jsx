@@ -30,6 +30,7 @@ import Feedback from "./Feedback";
 import AdminFeedback from "./AdminFeedback";
 import Calendar from "./FarmingCalendar";
 import MarketPrices from "./MarketPrices";
+import Loader from "./Loader";
 import FarmingMap from "./FarmingMap";
 import CropProfitCalculator from "./CropProfitCalculator";
 
@@ -201,6 +202,7 @@ function App() {
 
   return (
     <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
+      {loading && <Loader fullPage={true} message="Initializing Fasal Saathi..." />}
       {isOffline && (
         <div className="offline-banner">
           You are currently offline. Running in offline mode using local data.
@@ -240,16 +242,44 @@ function App() {
               ))}
             </select>
 
-            <div className="nav-user">
-              {farmerName ? (
-                <>
-                  👋 {farmerName}
-                  <button onClick={handleLogout}>Change User</button>
-                </>
-              ) : (
-                <Link to="/login">Get Started</Link>
-              )}
-            </div>
+          <div className="nav-user" onClick={() => setShowScorecard(!showScorecard)}>
+            {loading ? (
+              <div className="nav-loader-mini"></div>
+            ) : user ? (
+              <div className="user-profile-trigger">
+                <div className="profile-main">
+                  <span className="profile-name">{userData?.displayName || user.email?.split('@')[0]}</span>
+                  <FaChevronDown className={`chevron ${showScorecard ? 'open' : ''}`} />
+                </div>
+
+                {showScorecard && userData && (
+                  <div className="profile-scorecard" onClick={(e) => e.stopPropagation()}>
+                    <div className="scorecard-header">
+                      <div className="scorecard-avatar">{userData.displayName?.[0] || 'F'}</div>
+                      <h3>{userData.displayName}</h3>
+                      <p>{userData.email}</p>
+                    </div>
+                    <div className="scorecard-body">
+                      {[
+                        { label: "Primary Crop", value: userData.cropType },
+                        { label: "Language", value: LANGUAGE_OPTIONS.find(l => l.value === userData.language)?.label || userData.language },
+                        { label: "Location", value: userData.address || "Fetching..." }
+                      ].map((item, i) => (
+                        <div key={i} className="score-item">
+                          <label>{item.label}</label>
+                          <span>{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="scorecard-footer">
+                      <button onClick={handleLogout} className="btn-logout-alt">Sign Out</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/login" className="btn-get-started">Get Started</Link>
+            )}
           </div>
 
           <button
