@@ -288,7 +288,8 @@ function App() {
           >
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
-        </nav>
+        </div>
+      </nav>
 
 
 
