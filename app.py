@@ -56,6 +56,8 @@ def predict():
 
 @app.post("/predict-yield-lag")
 async def predict_yield_lag(payload: YieldInput):
+    if model_lag is None:
+        raise HTTPException(status_code=500, detail="Model not loaded")
     try:
         data = payload.data
 
@@ -80,6 +82,8 @@ async def predict_yield_lag(payload: YieldInput):
 
 @app.post("/predict-yield-trend")
 async def predict_yield_trend(payload: YieldInput):
+    if model_lag is None:
+        raise HTTPException(status_code=500, detail="Model not loaded")
     try:
         data = payload.data
 

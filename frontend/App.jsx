@@ -13,6 +13,7 @@ import {
   FaCalculator,
   FaMap,
   FaTachometerAlt,
+  FaChevronDown,
 } from "react-icons/fa";
 
 import Advisor from "./Advisor";
@@ -98,7 +99,7 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [profileCompleted, setProfileCompleted] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [showScorecard] = useState(false);
+   const [showScorecard, setShowScorecard] = useState(false);
   const location = useLocation();
 
   const farmerName = userData?.name || user?.displayName || "";
