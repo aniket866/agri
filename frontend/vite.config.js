@@ -123,14 +123,14 @@ export default defineConfig(({ mode }) => ({
                }
              }
            },
-           {
-             urlPattern: /^https:\/\/get\.geojs\.io\/.*/i,
-             handler: 'NetworkOnly',
-             options: {
-               cacheName: 'ip-geo-api',
-               networkTimeoutSeconds: 5
-             }
-           },
+            {
+              urlPattern: /^https:\/\/get\.geojs\.io\/.*/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'ip-geo-api',
+                networkTimeoutSeconds: 5
+              }
+            },
            {
              urlPattern: /^https:\/\/api\.bigdatacloud\.net\/.*/i,
              handler: 'CacheFirst',
@@ -171,14 +171,14 @@ export default defineConfig(({ mode }) => ({
                }
              }
            },
-           {
-             urlPattern: /^https:\/\/generativelanguage\.googleapis\.com\/.*/i,
-             handler: 'NetworkOnly',
-             options: {
-               cacheName: 'gemini-api',
-               networkTimeoutSeconds: 10
-             }
-           },
+            {
+              urlPattern: /^https:\/\/generativelanguage\.googleapis\.com\/.*/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'gemini-api',
+                networkTimeoutSeconds: 10
+              }
+            },
            {
              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
              handler: 'CacheFirst',
