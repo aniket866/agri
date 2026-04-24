@@ -22,6 +22,7 @@ import {
 import { useAdvisorStore } from "./stores/advisorStore";
 import { useYieldPrediction } from "./hooks/useYieldPrediction";
 import CropDiseaseDetection from "./CropDiseaseDetection";
+import PestManagement from "./PestManagement";
 
 export default function Advisor() {
   const navigate = useNavigate();
@@ -46,6 +47,8 @@ export default function Advisor() {
     setShowFarmingMap,
     showCropDiseaseDetection,
     setShowCropDiseaseDetection,
+    showPestManagement,
+    setShowPestManagement,
   } = useAdvisorStore();
 
   const {
@@ -194,7 +197,7 @@ export default function Advisor() {
             <h3>Offline Access</h3>
             <p>Use the app anytime, even without internet connectivity.</p>
           </div>
-          <div className="card reveal" onClick={() => setShowComingSoon(true)}>
+          <div className="card reveal" onClick={() => setShowPestManagement(true)}>
             <div className="icon">🐛</div>
             <h3>Pest Management</h3>
             <p>Early warnings & organic pest control tips.</p>
@@ -583,6 +586,14 @@ export default function Advisor() {
         <div className="weather-overlay" onClick={() => setShowCropDiseaseDetection(false)}>
           <div className="weather-popup" onClick={(e) => e.stopPropagation()}>
             <CropDiseaseDetection onClose={() => setShowCropDiseaseDetection(false)} />
+          </div>
+        </div>
+      )}
+
+      {showPestManagement && (
+        <div className="weather-overlay" onClick={() => setShowPestManagement(false)}>
+          <div className="weather-popup" onClick={(e) => e.stopPropagation()} style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}>
+            <PestManagement onClose={() => setShowPestManagement(false)} />
           </div>
         </div>
       )}
