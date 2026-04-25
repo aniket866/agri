@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel, Field
 import joblib
 import pandas as pd
@@ -14,6 +15,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ----------------------------------------------------------------------
+# FIX: Inject standard security headers
+# ----------------------------------------------------------------------
+# Leaving out headers makes the frontend vulnerable to clickjacking and 
+# data exfiltration. This middleware injects CSP, X-Frame-Options, 
+# and HSTS headers.
+# ----------------------------------------------------------------------
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        # Prevent clickjacking
+        response.headers["X-Frame-Options"] = "DENY"
+        # Enforce HTTP Strict Transport Security
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        # Content Security Policy to mitigate XSS and data exfiltration
+        response.headers["Content-Security-Policy"] = "default-src 'self'"
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
 
 class PredictRequest(BaseModel):
     Crop: str
