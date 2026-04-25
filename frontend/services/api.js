@@ -93,10 +93,21 @@ apiClient.interceptors.response.use(
     }
 
     if (canRetryRequest(error, config)) {
+      // Increment the retry count to track attempts
       const retryCount = config.__retryCount || 0;
       config.__retryCount = retryCount + 1;
+
+      // Enforce a strict timeout on retries to prevent indefinite waiting
+      // if a server connection drops without a proper response
+      config.timeout = 10000;
+
+      // Calculate the exponential backoff delay based on the retry count
       const retryDelay = getRetryDelayMs(retryCount, config.retryDelayMs);
+
+      // Pause execution for the calculated delay duration
       await wait(retryDelay);
+
+      // Re-issue the request with the updated configuration
       return apiClient(config);
     }
 
