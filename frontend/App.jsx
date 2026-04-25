@@ -213,7 +213,6 @@ function App() {
 
       <nav className="navbar">
         <div className="nav-left">
-          <FaLeaf className="icon" />
           <Link to="/" className="brand">Fasal Saathi</Link>
         </div>
 
