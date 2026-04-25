@@ -15,6 +15,16 @@ const RETRY_BASE_DELAY_MS = toNumberOr(import.meta.env.VITE_API_RETRY_DELAY_MS, 
 const isErrorLoggingEndpoint = (url) => String(url || '').includes('/api/log-error');
 
 const canRetryRequest = (error, config) => {
+  // Prevent automatic retries on non-idempotent HTTP methods (like POST)
+  // to avoid side-effects such as creating duplicate database entries
+  // (e.g. submitting the same feedback multiple times on a timeout).
+  const method = (config.method || 'get').toLowerCase();
+  const isIdempotent = ['get', 'head', 'options', 'put', 'delete'].includes(method);
+  
+  if (!isIdempotent && !config.retryNonIdempotent) {
+    return false;
+  }
+
   const retries =
     typeof config.retries === 'number' ? config.retries : DEFAULT_RETRIES;
   const retryCount = config.__retryCount || 0;
