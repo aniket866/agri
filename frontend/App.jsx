@@ -213,7 +213,18 @@ function App() {
 
       <nav className="navbar">
         <div className="nav-left">
-          <Link to="/" className="brand">Fasal Saathi</Link>
+          <Link
+            to="/"
+            className="brand"
+            onClick={(e) => {
+              if (location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+          >
+            Fasal Saathi
+          </Link>
         </div>
 
         <ul className={`nav-center ${isOpen ? "active" : ""}`}>
