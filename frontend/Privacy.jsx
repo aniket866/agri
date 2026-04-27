@@ -11,7 +11,7 @@ export default function Privacy() {
       <section>
         <h2>1. Introduction</h2>
         <p>
-          At Fasal Saathi, we are committed to protecting your privacy. This Privacy
+          At <span className="notranslate">Fasal Saathi</span>, we are committed to protecting your privacy. This Privacy
           Policy explains how we collect, use, and safeguard your information when
           you use our agricultural advisory platform.
         </p>

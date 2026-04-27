@@ -6,8 +6,8 @@ export default function FAQ() {
 
   const faqs = [
     {
-      q: "🌾 What is Fasal Saathi?",
-      a: "Fasal Saathi is an AI-powered agricultural assistant that helps farmers with crop recommendations, soil analysis, weather updates, and yield optimization."
+      q: "🌾 What is <span className=\"notranslate\">Fasal Saathi</span>?",
+      a: "<span className=\"notranslate\">Fasal Saathi</span> is an AI-powered agricultural assistant that helps farmers with crop recommendations, soil analysis, weather updates, and yield optimization."
     },
     {
       q: "🤖 How does the crop recommendation system work?",
@@ -23,7 +23,7 @@ export default function FAQ() {
     },
     {
       q: "💧 Can it help with irrigation planning?",
-      a: "Yes, Fasal Saathi suggests optimal irrigation schedules based on weather forecasts and soil moisture data."
+      a: "Yes, <span className=\"notranslate\">Fasal Saathi</span> suggests optimal irrigation schedules based on weather forecasts and soil moisture data."
     },
     {
       q: "🌱 Which crops are supported?",
@@ -34,7 +34,7 @@ export default function FAQ() {
       a: "Yes, we use Firebase Authentication and secure cloud storage to ensure your data is protected and private."
     },
     {
-      q: "📱 Can I use Fasal Saathi on mobile devices?",
+      q: "📱 Can I use <span className=\"notranslate\">Fasal Saathi</span> on mobile devices?",
       a: "Absolutely! The platform is fully responsive and works seamlessly on smartphones, tablets, and desktops."
     },
     {
@@ -62,9 +62,9 @@ export default function FAQ() {
   return (
     <div className="faq-page">
       <h1>Frequently Asked Questions</h1>
-      <p className="faq-subtitle">
-        Everything you need to know about using Fasal Saathi effectively
-      </p>
+        <p className="faq-subtitle">
+          Everything you need to know about using <span className="notranslate">Fasal Saathi</span> effectively
+        </p>
 
       <div className="faq-container">
         {faqs.map((faq, index) => (

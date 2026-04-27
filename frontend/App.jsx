@@ -37,9 +37,9 @@ import FarmingMap from "./FarmingMap";
 import CropProfitCalculator from "./CropProfitCalculator";
 import Community from "./Community";
 
- import { syncOfflineRequests } from "./lib/syncOfflineRequests";
- import { auth, db, isFirebaseConfigured, doc, onSnapshot } from "./lib/firebase";
- import { onAuthStateChanged, signOut } from "firebase/auth";
+import { syncOfflineRequests } from "./lib/syncOfflineRequests";
+import { auth, db, isFirebaseConfigured, doc, onSnapshot } from "./lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import "./App.css";
 import "./themes/sunlight.css";
@@ -53,7 +53,7 @@ const LANGUAGE_OPTIONS = [
   { value: "bn", label: "🇮🇳 বাংলা", englishName: "bengali" },
   { value: "ta", label: "🇮🇳 தமிழ்", englishName: "tamil" },
   { value: "te", label: "🇮🇳 తెలుగు", englishName: "telugu" },
-  { value: "gu", label: "🇮🇳 ગુજરાତି", englishName: "gujarati" },
+  { value: "gu", label: "🇮🇳 ગુજરાતી", englishName: "gujarati" },
   { value: "pa", label: "🇮🇳 ਪੰਜਾਬੀ", englishName: "punjabi" },
   { value: "kn", label: "🇮🇳 ಕನ್ನಡ", englishName: "kannada" },
   { value: "ml", label: "🇮🇳 മലയാളം", englishName: "malayalam" },
@@ -70,28 +70,29 @@ const getInitialLanguage = () => {
   }
 };
 
-const setGoogleTranslateCookie = (lang) => {
-  try {
-    const cookieValue = encodeURIComponent(`/en/${lang}`);
-    document.cookie = `googtrans=${cookieValue}; path=/;`;
-    const hostname = window.location.hostname;
-    if (hostname) {
-      document.cookie = `googtrans=${cookieValue}; domain=.${hostname}; path=/;`;
-    }
-  } catch {
-    // Ignore if cookies are blocked
-  }
-};
-
-const applyGoogleTranslate = (lang) => {
-  document.cookie = `googtrans=/en/${lang}; path=/`;
-  window.location.reload();
-};
-
 const syncLanguage = (lang, setLang) => {
   setLang(lang);
   localStorage.setItem("preferredLanguage", lang);
-  applyGoogleTranslate(lang);
+
+  // Set cookie WITHOUT encoding first so Google can read it
+  if (lang === 'en') {
+    // Clear cookie for English
+    document.cookie = 'googtrans=; path=/; max-age=0';
+    if (window.location.hostname) {
+      document.cookie = 'googtrans=; domain=.' + window.location.hostname + '; path=/; max-age=0';
+    }
+  } else {
+    const rawCookieValue = '/en/' + lang;
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 10);
+    // Set raw value (no encoding)
+    document.cookie = 'googtrans=' + rawCookieValue + '; path=/; expires=' + expires.toUTCString();
+    if (window.location.hostname) {
+      document.cookie = 'googtrans=' + rawCookieValue + '; domain=.' + window.location.hostname + '; path=/; expires=' + expires.toUTCString();
+    }
+  }
+  // Use a small delay to ensure cookies are set before reload
+  setTimeout(() => window.location.reload(), 50);
 };
 
 function App() {
@@ -103,23 +104,17 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showScorecard, setShowScorecard] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  useEffect(() => {
-  console.log("USER DATA:", userData);
-}, [userData]);
-  const { refs, floatingStyles } = useFloating({
-  placement: "bottom-end",
-  middleware: [
-    offset(8),
-    flip(),
-    shift({ padding: 10 })
-  ],
-  whileElementsMounted: autoUpdate
-});
-  const location = useLocation();
 
-  const handleLangChange = (e) => {
-    syncLanguage(e.target.value, setPreferredLang);
-  };
+  const { refs, floatingStyles } = useFloating({
+    placement: "bottom-end",
+    middleware: [
+      offset(8),
+      flip(),
+      shift({ padding: 10 })
+    ],
+    whileElementsMounted: autoUpdate
+  });
+  const location = useLocation();
 
   const handleNavToggle = () => {
     setIsOpen(!isOpen);
@@ -138,30 +133,25 @@ function App() {
 
   useNotifications();
 
-   /* ---------------- THEME SYSTEM ---------------- */
-   const [isDarkTheme, setIsDarkTheme] = useState(() => {
-     try {
-       return (localStorage.getItem("theme") || "light") === "dark";
-     } catch {
-       return false;
-     }
-   });
+  /* ---------------- THEME SYSTEM ---------------- */
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    try {
+      return (localStorage.getItem("theme") || "light") === "dark";
+    } catch {
+      return false;
+    }
+  });
 
-   useEffect(() => {
-     document.documentElement.classList.toggle("theme-dark", isDarkTheme);
-     localStorage.setItem("theme", isDarkTheme ? "dark" : "light");
-   }, [isDarkTheme]);
+  useEffect(() => {
+    document.documentElement.classList.toggle("theme-dark", isDarkTheme);
+    localStorage.setItem("theme", isDarkTheme ? "dark" : "light");
+  }, [isDarkTheme]);
 
-   const handleThemeToggle = () => {
-     setIsDarkTheme(!isDarkTheme);
-   };
+  const handleThemeToggle = () => {
+    setIsDarkTheme(!isDarkTheme);
+  };
 
-
-   useEffect(() => {
-     setGoogleTranslateCookie(preferredLang);
-    }, [preferredLang]);
-
-   useEffect(() => {
+  useEffect(() => {
     if (!isFirebaseConfigured()) {
       setLoading(false);
       return;
@@ -195,27 +185,27 @@ function App() {
 
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-   useEffect(() => {
-     const handleNetworkChange = () => {
-       const offline = !navigator.onLine;
-       setIsOffline(offline);
-       if (!offline) {
-         syncOfflineRequests();
-       }
-     };
-     window.addEventListener("online", handleNetworkChange);
-     window.addEventListener("offline", handleNetworkChange);
-     const interval = setInterval(handleNetworkChange, 1000);
-     return () => {
-       window.removeEventListener("online", handleNetworkChange);
-       window.removeEventListener("offline", handleNetworkChange);
-       clearInterval(interval);
-     };
-   }, []);
+  useEffect(() => {
+    const handleNetworkChange = () => {
+      const offline = !navigator.onLine;
+      setIsOffline(offline);
+      if (!offline) {
+        syncOfflineRequests();
+      }
+    };
+    window.addEventListener("online", handleNetworkChange);
+    window.addEventListener("offline", handleNetworkChange);
+    const interval = setInterval(handleNetworkChange, 1000);
+    return () => {
+      window.removeEventListener("online", handleNetworkChange);
+      window.removeEventListener("offline", handleNetworkChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
-      {loading && <Loader fullPage={true} message="Initializing Fasal Saathi..." />}
+       {loading && <Loader fullPage={true} message={<span className="notranslate">Initializing Fasal Saathi...</span>} />}
       {isOffline && (
         <div className="offline-banner">
           You are currently offline. Running in offline mode using local data.
@@ -223,10 +213,10 @@ function App() {
       )}
 
       <nav className="navbar">
-        <div className="nav-left">
-          <FaLeaf className="icon" />
-          <Link to="/" className="brand">Fasal Saathi</Link>
-        </div>
+          <div className="nav-left">
+            <FaLeaf className="icon" />
+            <Link to="/" className="brand">Fasal Saathi</Link>
+          </div>
 
         <ul className={`nav-center ${isOpen ? "active" : ""}`}>
           <li><Link to="/" onClick={() => setIsOpen(false)}>Home</Link></li>
@@ -235,107 +225,75 @@ function App() {
           <li><Link to="/resources" onClick={() => setIsOpen(false)}>Resources</Link></li>
         </ul>
 
-         <div className="nav-right">
-           <button onClick={handleThemeToggle} className="theme-toggle" aria-label="Toggle Theme">
-             {isDarkTheme ? "☀️" : "🌙"}
-           </button>
+          <div className="nav-right">
+            <button onClick={handleThemeToggle} className="theme-toggle" aria-label="Toggle Theme">
+              {isDarkTheme ? "☀️" : "🌙"}
+            </button>
 
-           <div className="more-menu-container" onClick={() => { setShowMoreMenu(!showMoreMenu); setShowScorecard(false); }}>
-             <button className="btn-more-menu" aria-label="Profile and Settings">
-               <FaUser style={{ width: "24px", height: "24px", fontSize: "24px", minWidth: "24px", minHeight: "24px" }} />
-             </button>
-             {showMoreMenu && (
-               <div className="more-dropdown" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="more-menu-toggle" aria-label="More Options">
+              <FaBars />
+            </button>
+
+            {showMoreMenu && (
+              <div className="more-dropdown" onClick={(e) => e.stopPropagation()}>
                  <div className="dropdown-section">
                    <label>Language</label>
-                   <select
-                     className="lang-select-dropdown notranslate"
+                   <LanguageDropdown
+                     options={LANGUAGE_OPTIONS}
                      value={preferredLang}
-                     onChange={handleLangChange}
-                   >
-                     {LANGUAGE_OPTIONS.map((l) => (
-                       <option key={l.value} value={l.value}>
-                         {l.label}
-                       </option>
-                     ))}
-                   </select>
+                     onChange={(lang) => {
+                       syncLanguage(lang, setPreferredLang);
+                       setShowMoreMenu(false);
+                     }}
+                   />
                  </div>
-                 <div className="dropdown-links">
-                   <Link to="/dashboard" onClick={() => setShowMoreMenu(false)}><FaTachometerAlt /> Dashboard</Link>
-                   <Link to="/community" onClick={() => setShowMoreMenu(false)}><FaComments /> Community</Link>
-                 </div>
-               </div>
-             )}
-           </div>
+                <div className="dropdown-links">
+                  <Link to="/dashboard" onClick={() => setShowMoreMenu(false)}><FaTachometerAlt /> Dashboard</Link>
+                  <Link to="/community" onClick={() => setShowMoreMenu(false)}><FaComments /> Community</Link>
+                </div>
+              </div>
+            )}
 
           <div className="nav-user" onClick={() => { setShowScorecard(!showScorecard); setShowMoreMenu(false); }}>
             {loading ? (
               <div className="nav-loader-mini"></div>
             ) : user ? (
-              <div
-                className="user-profile-trigger"
-                ref={refs.setReference}
-                >
+              <div className="user-profile-trigger">
                 <div className="profile-main">
                   <span className="profile-name">{userData?.displayName || user.email?.split('@')?.[0] || "Farmer"}</span>
                   <FaChevronDown className={`chevron ${showScorecard ? 'open' : ''}`} />
                 </div>
-                
-                {showScorecard && (
-  <div
-    ref={refs.setFloating}
-    style={floatingStyles}
-    className="profile-scorecard animate-dropdown"
-    onClick={(e) => e.stopPropagation()}
-  >
-    <div className="scorecard-header">
-  <div className="scorecard-avatar">
-    {userData?.displayName?.[0] || "U"}
-  </div>
-  <h3>{userData?.displayName || "User"}</h3>
-  <p>{userData?.email || user?.email}</p>
-</div>
 
-<div className="scorecard-body">
-  <div className="score-item">
-    <label>Primary Crop :</label>
-    <span>
-      {userData?.cropType
-        ? userData.cropType.charAt(0).toUpperCase() + userData.cropType.slice(1)
-        : "-"}
-    </span>
-  </div>
-
-  <div className="score-item">
-    <label>Language :</label>
-    <span>
-      {
-        LANGUAGE_OPTIONS.find(l => l.value === userData?.language)?.label || "-"
-      }
-    </span>
-  </div>
-
-  <div className="score-item">
-    <label>Location :</label>
-    <span>
-      {userData?.address || "-"}
-    </span>
-  </div>
-</div>
-<div className="scorecard-footer">
-  <button onClick={handleLogout} className="btn-logout-green">
-    Sign Out
-  </button>
-</div>
-  </div>
-)}
+                {showScorecard && userData && (
+                  <div className="profile-scorecard" onClick={(e) => e.stopPropagation()}>
+                    <div className="scorecard-header">
+                      <div className="scorecard-avatar">{userData.displayName?.[0] || 'F'}</div>
+                      <h3>{userData.displayName}</h3>
+                      <p>{userData.email}</p>
+                    </div>
+                    <div className="scorecard-body">
+                      {[
+                        { label: "Primary Crop", value: userData.cropType },
+                        { label: "Language", value: LANGUAGE_OPTIONS.find(l => l.value === userData.language)?.label || userData.language },
+                        { label: "Location", value: userData.address || "Fetching..." }
+                      ].map((item, i) => (
+                        <div key={i} className="score-item">
+                          <label>{item.label}</label>
+                          <span>{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="scorecard-footer">
+                      <button onClick={handleLogout} className="btn-logout-alt">Sign Out</button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <Link to="/login" className="btn-get-started">Get Started</Link>
             )}
           </div>
         </div>
-
         <button
           className="hamburger"
           onClick={handleNavToggle}
@@ -344,30 +302,28 @@ function App() {
         </button>
       </nav>
 
+        {!loading && user && !user.emailVerified && !showScorecard && window.location.pathname !== "/login" && (
+          <div className="verification-overlay">
+            <div className="verification-card">
+              <div className="verify-icon">✉️</div>
+              <h2>Verify Your Email</h2>
+              <p>We've sent a link to <b>{user.email}</b>.<br /> Please verify your email to unlock all features.</p>
+              <button
+                 onClick={() => {
+                   auth?.currentUser?.reload().then(() => window.location.reload()).catch(() => window.location.reload());
+                 }}
+                 className="btn-refresh"
+              >
+                I've Verified My Email
+              </button>
+               <button onClick={handleLogout} className="btn-logout-simple">Sign Out</button>
+             </div>
+           </div>
+          )}
 
-
-      {!loading && user && !user.emailVerified && !showScorecard && location.pathname !== "/login" && (
-        <div className="verification-overlay">
-          <div className="verification-card">
-            <div className="verify-icon">✉️</div>
-            <h2>Verify Your Email</h2>
-            <p>We've sent a link to <b>{user.email}</b>.<br /> Please verify your email to unlock all features.</p>
-            <button
-              onClick={() => {
-                auth.currentUser.reload().then(() => window.location.reload());
-              }}
-              className="btn-refresh"
-            >
-              I've Verified My Email
-            </button>
-            <button onClick={handleLogout} className="btn-logout-simple">Sign Out</button>
-          </div>
-        </div>
-      )}
-
-      {!loading && user && user.emailVerified && !profileCompleted && location.pathname !== "/profile-setup" && (
-        <Navigate to="/profile-setup" />
-      )}
+        {!loading && user && user.emailVerified && !profileCompleted && window.location.pathname !== "/profile-setup" && (
+          <Navigate to="/profile-setup" />
+        )}
 
       <Routes>
         <Route path="/" element={<Home user={user} />} />
@@ -388,13 +344,13 @@ function App() {
         <Route path="/community" element={<Community />} />
       </Routes>
 
-      {/* Floating Chat Button */}
-      <Link to="/advisor" className="floating-chat-btn" aria-label="Chat Support">
-        <FaComments size={28} />
-      </Link>
+        {/* Floating Chat Button */}
+        <Link to="/advisor" className="floating-chat-btn" aria-label="Chat Support">
+          <FaComments size={28} />
+        </Link>
 
-      <ToastContainer position="bottom-right" />
-    </div>
+        <ToastContainer position="bottom-right" />
+      </div>
   );
 }
 
