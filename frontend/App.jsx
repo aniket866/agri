@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import "./App.css";
 import Advisor from "./Advisor";
 import How from "./How";
 import Home from "./Home";
-import FAQ from "./pages/FAQ";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
+import FAQ from "./FAQ";
+import Terms from "./Terms";
+import Privacy from "./Privacy";
 import Resources from "./Resources";
 import CropGuide from "./CropGuide";
 import { ToastContainer } from "react-toastify";
 import useNotifications from "./Notifications";
-import React, { useEffect, useState } from "react";
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
-
-import { ToastContainer } from "react-toastify";
-
 import {
   FaHome,
   FaComments,
@@ -29,17 +24,10 @@ import {
   FaChevronDown,
   FaUser,
 } from "react-icons/fa";
-
-import Advisor from "./Advisor";
-import Home from "./Home";
-import Resources from "./Resources";
-import CropGuide from "./CropGuide";
-import How from "./How";
 import Dashboard from "./Dashboard";
 import Auth from "./Auth";
 import ProfileSetup from "./ProfileSetup";
 import LanguageDropdown from "./LanguageDropdown";
-import useNotifications from "./Notifications";
 import Schemes from "./GovernmentSchemes";
 import Feedback from "./Feedback";
 import AdminFeedback from "./AdminFeedback";
@@ -50,11 +38,9 @@ import FarmingMap from "./FarmingMap";
 import CropProfitCalculator from "./CropProfitCalculator";
 import Community from "./Community";
 import SoilAnalysis from "./SoilAnalysis";
-
 import { syncOfflineRequests } from "./lib/syncOfflineRequests";
 import { auth, db, isFirebaseConfigured, doc, onSnapshot } from "./lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-
 import "./themes/sunlight.css";
 
 /* ---------------- LANGUAGE ---------------- */
@@ -116,7 +102,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showScorecard, setShowScorecard] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const location = useLocation();
+
 
   const handleLangChange = (e) => {
     syncLanguage(e.target.value, setPreferredLang);
@@ -214,8 +200,7 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
+    <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
       {loading && <Loader fullPage={true} message="Initializing Fasal Saathi..." />}
       {isOffline && (
         <div className="offline-banner">
@@ -229,7 +214,7 @@ function App() {
             to="/"
             className="brand"
             onClick={(e) => {
-              if (location.pathname === "/") {
+              if (window.location.pathname === "/") {
                 e.preventDefault();
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
@@ -326,7 +311,7 @@ function App() {
         </button>
       </nav>
 
-    {!loading && user && !user.emailVerified && !showScorecard && location.pathname !== "/login" && (
+    {!loading && user && !user.emailVerified && !showScorecard && window.location.pathname !== "/login" && (
       <div className="verification-overlay">
         <div className="verification-card">
           <div className="verify-icon">✉️</div>
@@ -340,18 +325,17 @@ function App() {
           >
             I've Verified My Email
           </button>
-          <button onClick={handleLogout} className="btn-logout-simple">Sign Out</button>
-        </div>
-      )}
+           <button onClick={handleLogout} className="btn-logout-simple">Sign Out</button>
+         </div>
+       </div>
+       )}
 
-       {!loading && user && user.emailVerified && !profileCompleted && location.pathname !== "/profile-setup" && (
+       {!loading && user && user.emailVerified && !profileCompleted && window.location.pathname !== "/profile-setup" && (
          <Navigate to="/profile-setup" />
        )}
 
       <Routes>
         <Route path="/" element={<Home user={user} />} />
-       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/advisor" element={<Advisor />} />
         <Route path="/how-it-works" element={<How />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -380,7 +364,6 @@ function App() {
 
         <ToastContainer position="bottom-right" />
       </div>
-    </BrowserRouter>
   );
 }
 

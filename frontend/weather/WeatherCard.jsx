@@ -31,10 +31,6 @@ const getWeatherIcon = (summary = "") => {
   return "🌤️";
 };
 
-function formatSeverity(severity) {
-  return severity.charAt(0).toUpperCase() + severity.slice(1);
-}
-
 export default function WeatherCard({
   onClose,
   embedded = false,
