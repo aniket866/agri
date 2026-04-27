@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import "./App.css";
 import Advisor from "./Advisor";
@@ -98,7 +98,6 @@ const syncLanguage = (lang, setLang) => {
 function App() {
   const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
   const [isOpen, setIsOpen] = useState(false);
-  const [sunlight, setSunlight] = useState(false);
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [profileCompleted, setProfileCompleted] = useState(true);
@@ -239,33 +238,32 @@ function App() {
             {isDarkTheme ? "☀️" : "🌙"}
           </button>
 
-          <div className="more-menu-container" onClick={() => { setShowMoreMenu(!showMoreMenu); setShowScorecard(false); }}>
-            <button className="btn-more-menu" aria-label="Profile and Settings">
-              <FaUser style={{ width: "24px", height: "24px", fontSize: "24px", minWidth: "24px", minHeight: "24px" }} />
-            </button>
-            {showMoreMenu && (
-              <div className="more-dropdown" onClick={(e) => e.stopPropagation()}>
-                <div className="dropdown-section">
-                  <label>Language</label>
-                  <select
-                    className="lang-select-dropdown notranslate"
-                    value={preferredLang}
-                    onChange={handleLangChange}
-                  >
-                    {LANGUAGE_OPTIONS.map((l) => (
-                      <option key={l.value} value={l.value}>
-                        {l.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="dropdown-links">
-                  <Link to="/dashboard" onClick={() => setShowMoreMenu(false)}><FaTachometerAlt /> Dashboard</Link>
-                  <Link to="/community" onClick={() => setShowMoreMenu(false)}><FaComments /> Community</Link>
-                </div>
+          <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="more-menu-toggle" aria-label="More Options">
+            <FaBars />
+          </button>
+
+          {showMoreMenu && (
+            <div className="more-dropdown" onClick={(e) => e.stopPropagation()}>
+              <div className="dropdown-section">
+                <label>Language</label>
+                <select
+                  className="lang-select-dropdown notranslate"
+                  value={preferredLang}
+                  onChange={handleLangChange}
+                >
+                  {LANGUAGE_OPTIONS.map((l) => (
+                    <option key={l.value} value={l.value}>
+                      {l.label}
+                    </option>
+                  ))}
+                </select>
               </div>
-            )}
-          </div>
+              <div className="dropdown-links">
+                <Link to="/dashboard" onClick={() => setShowMoreMenu(false)}><FaTachometerAlt /> Dashboard</Link>
+                <Link to="/community" onClick={() => setShowMoreMenu(false)}><FaComments /> Community</Link>
+              </div>
+            </div>
+          )}
 
           <div className="nav-user" onClick={() => { setShowScorecard(!showScorecard); setShowMoreMenu(false); }}>
             {loading ? (
@@ -315,59 +313,59 @@ function App() {
         </button>
       </nav>
 
-      {!loading && user && !user.emailVerified && !showScorecard && location.pathname !== "/login" && (
-        <div className="verification-overlay">
-          <div className="verification-card">
-            <div className="verify-icon">✉️</div>
-            <h2>Verify Your Email</h2>
-            <p>We've sent a link to <b>{user.email}</b>.<br /> Please verify your email to unlock all features.</p>
-            <button
-               onClick={() => {
-                 auth?.currentUser?.reload().then(() => window.location.reload()).catch(() => window.location.reload());
-               }}
-               className="btn-refresh"
-            >
-              I've Verified My Email
-            </button>
-            <button onClick={handleLogout} className="btn-logout-simple">Sign Out</button>
-          </div>
+    {!loading && user && !user.emailVerified && !showScorecard && location.pathname !== "/login" && (
+      <div className="verification-overlay">
+        <div className="verification-card">
+          <div className="verify-icon">✉️</div>
+          <h2>Verify Your Email</h2>
+          <p>We've sent a link to <b>{user.email}</b>.<br /> Please verify your email to unlock all features.</p>
+          <button
+             onClick={() => {
+               auth?.currentUser?.reload().then(() => window.location.reload()).catch(() => window.location.reload());
+             }}
+             className="btn-refresh"
+          >
+            I've Verified My Email
+          </button>
+          <button onClick={handleLogout} className="btn-logout-simple">Sign Out</button>
         </div>
-      )}
+      </div>
+    )}
 
-       {!loading && user && user.emailVerified && !profileCompleted && location.pathname !== "/profile-setup" && (
-         <Navigate to="/profile-setup" />
-       )}
+     {!loading && user && user.emailVerified && !profileCompleted && location.pathname !== "/profile-setup" && (
+       <Navigate to="/profile-setup" />
+     )}
 
-       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/advisor" element={<Advisor />} />
-        <Route path="/how-it-works" element={<How />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/crop-guide" element={<CropGuide />} />
-        <Route path="/schemes" element={<Schemes />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/profile-setup" element={<ProfileSetup user={user} profileCompleted={profileCompleted} />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/share-feedback" element={<Feedback />} />
-        <Route path="/admin/feedback" element={<AdminFeedback />} />
-        <Route path="/market-prices" element={<MarketPrices />} />
-        <Route path="/farming-map" element={<FarmingMap />} />
-        <Route path="/profit-calculator" element={<CropProfitCalculator />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/soil-analysis" element={<SoilAnalysis />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy-policy" element={<Privacy />} />
-      </Routes>
+     <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/advisor" element={<Advisor />} />
+      <Route path="/how-it-works" element={<How />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/crop-guide" element={<CropGuide />} />
+      <Route path="/schemes" element={<Schemes />} />
+      <Route path="/resources" element={<Resources />} />
+      <Route path="/login" element={<Auth />} />
+      <Route path="/profile-setup" element={<ProfileSetup user={user} profileCompleted={profileCompleted} />} />
+      <Route path="/calendar" element={<Calendar />} />
+      <Route path="/share-feedback" element={<Feedback />} />
+      <Route path="/admin/feedback" element={<AdminFeedback />} />
+      <Route path="/market-prices" element={<MarketPrices />} />
+      <Route path="/farming-map" element={<FarmingMap />} />
+      <Route path="/profit-calculator" element={<CropProfitCalculator />} />
+      <Route path="/community" element={<Community />} />
+      <Route path="/soil-analysis" element={<SoilAnalysis />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy-policy" element={<Privacy />} />
+    </Routes>
 
-      {/* Floating Chat Button */}
-      <Link to="/advisor" className="floating-chat-btn" aria-label="Chat Support">
-        <FaComments size={28} />
-      </Link>
+    {/* Floating Chat Button */}
+    <Link to="/advisor" className="floating-chat-btn" aria-label="Chat Support">
+      <FaComments size={28} />
+    </Link>
 
-      <ToastContainer position="bottom-right" />
-    </div>
+    <ToastContainer position="bottom-right" />
+  </div>
   );
 }
 
