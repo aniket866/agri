@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
-
-import { ToastContainer } from "react-toastify";
-
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import "./App.css";
 import Advisor from "./Advisor";
 import How from "./How";
 import Home from "./Home";
-import FAQ from "./FAQ";
-import Terms from "./Terms";
-import Privacy from "./Privacy";
+import FAQ from "./pages/FAQ";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import Resources from "./Resources";
 import CropGuide from "./CropGuide";
 import { ToastContainer } from "react-toastify";
 import useNotifications from "./Notifications";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+
+import { ToastContainer } from "react-toastify";
+
 import {
   FaHome,
   FaComments,
@@ -29,10 +29,17 @@ import {
   FaChevronDown,
   FaUser,
 } from "react-icons/fa";
+
+import Advisor from "./Advisor";
+import Home from "./Home";
+import Resources from "./Resources";
+import CropGuide from "./CropGuide";
+import How from "./How";
 import Dashboard from "./Dashboard";
 import Auth from "./Auth";
 import ProfileSetup from "./ProfileSetup";
 import LanguageDropdown from "./LanguageDropdown";
+import useNotifications from "./Notifications";
 import Schemes from "./GovernmentSchemes";
 import Feedback from "./Feedback";
 import AdminFeedback from "./AdminFeedback";
@@ -207,7 +214,8 @@ function App() {
   }, []);
 
   return (
-    <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
+    <BrowserRouter>
+      <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
       {loading && <Loader fullPage={true} message="Initializing Fasal Saathi..." />}
       {isOffline && (
         <div className="offline-banner">
@@ -365,13 +373,14 @@ function App() {
         <Route path="/privacy-policy" element={<Privacy />} />
       </Routes>
 
-      {/* Floating Chat Button */}
-      <Link to="/advisor" className="floating-chat-btn" aria-label="Chat Support">
-        <FaComments size={28} />
-      </Link>
+        {/* Floating Chat Button */}
+        <Link to="/advisor" className="floating-chat-btn" aria-label="Chat Support">
+          <FaComments size={28} />
+        </Link>
 
-      <ToastContainer position="bottom-right" />
-    </div>
+        <ToastContainer position="bottom-right" />
+      </div>
+    </BrowserRouter>
   );
 }
 
