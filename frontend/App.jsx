@@ -338,6 +338,7 @@ function App() {
         <Route path="/crop-guide" element={<CropGuide />} />
         <Route path="/schemes" element={<Schemes />} />
         <Route path="/resources" element={<Resources />} />
+        <Route path="/contributors" element={<Contributors />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/profile-setup" element={<ProfileSetup user={user} profileCompleted={profileCompleted} />} />
         <Route path="/calendar" element={<Calendar />} />
