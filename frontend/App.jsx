@@ -334,7 +334,7 @@ function App() {
         <Route path="/" element={<Home user={user} />} />
         <Route path="/advisor" element={<Advisor />} />
         <Route path="/how-it-works" element={<How />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={!loading && !user ? <Navigate to="/login" state={{ from: location }} replace /> : <Dashboard />} />
         <Route path="/crop-guide" element={<CropGuide />} />
         <Route path="/schemes" element={<Schemes />} />
         <Route path="/resources" element={<Resources />} />

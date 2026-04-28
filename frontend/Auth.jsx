@@ -8,7 +8,7 @@ import {
   signOut
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FaGoogle, FaEnvelope, FaLock, FaUser, FaArrowRight, FaLeaf } from "react-icons/fa";
 import { auth, db, isFirebaseConfigured } from "./lib/firebase";
 import "./Auth.css";
@@ -22,6 +22,9 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
 
   if (!isFirebaseConfigured()) {
     return (
@@ -59,7 +62,7 @@ const Auth = () => {
           return;
         }
 
-        navigate("/");
+        navigate(from, { replace: true });
       } else {
         // Sign Up Logic
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -113,7 +116,7 @@ const Auth = () => {
         lastLogin: new Date().toISOString()
       }, { merge: true });
 
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
       setError("Failed to sign in with Google.");
