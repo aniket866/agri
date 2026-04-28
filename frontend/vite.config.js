@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import legacy from '@vitejs/plugin-legacy'
 import { VitePWA } from 'vite-plugin-pwa'
 
 const spaFallbackPlugin = () => ({
@@ -22,6 +23,12 @@ export default defineConfig(() => ({
   plugins: [
     spaFallbackPlugin(),
     react(),
+    // Legacy polyfills for older browsers (e.g., older Android Chrome)
+    // Critical for rural farmers who may be using older mobile devices
+    legacy({
+      targets: ['defaults', 'not IE 11', 'Android >= 4.4', 'Chrome >= 61'],
+      modernPolyfills: true
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [],
