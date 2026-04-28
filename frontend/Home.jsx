@@ -252,13 +252,30 @@ export default function Home({ user }) {
               to maximize your agricultural productivity.
             </p>
             <div className="hero-buttons">
-              <Link to={user ? "/advisor" : "/login"} className="btn-primary">
+              {/* 
+                Primary CTA Link:
+                Directs the user to either the AI advisor or the login page.
+                We provide a clear aria-label so screen readers understand the context.
+              */}
+              <Link 
+                to={user ? "/advisor" : "/login"} 
+                className="btn-primary"
+                aria-label={user ? "Get started with AI Advisor" : "Log in to get started with AI Advisor"}
+              >
                 Get Started
               </Link>
-              <Link to="/how-it-works" className="btn-secondary">
+
+              {/* 
+                Secondary Info Link:
+                Explains the app's functionality.
+              */}
+              <Link 
+                to="/how-it-works" 
+                className="btn-secondary"
+                aria-label="Learn how the AI advisor helps farmers"
+              >
                 Learn More
               </Link>
-              
             </div>
           </div>
           <div className="hero-stats">
@@ -335,12 +352,16 @@ export default function Home({ user }) {
                    <span className="stat-label">Global Community</span>
                  </div>
                </div>
-               <Link to="/contributors" className="btn btn-primary">
-                 <FaUsers /> View All Contributors
-               </Link>
+                <Link 
+                  to="/contributors" 
+                  className="btn btn-primary"
+                  aria-label="View all people who contributed to this project"
+                >
+                  <FaUsers aria-hidden="true" /> View All Contributors
+                </Link>
              </div>
              <div className="contributors-illustration">
-               <FaUsers className="big-icon" />
+               <FaUsers className="big-icon" aria-hidden="true" />
              </div>
            </div>
          </div>
@@ -370,7 +391,11 @@ export default function Home({ user }) {
             <p>Receive personalized farming advice</p>
           </div>
         </div>
-        <Link to={user ? "/advisor" : "/login"} className="btn-primary">
+        <Link 
+          to={user ? "/advisor" : "/login"} 
+          className="btn-primary"
+          aria-label={user ? "Try the AI advisor now" : "Log in to try the AI advisor"}
+        >
           Try It Now
         </Link>
       </section>
@@ -400,7 +425,11 @@ export default function Home({ user }) {
       <section className="cta-section">
         <h2>Ready to Transform Your Farm?</h2>
         <p>Join thousands of farmers already benefiting from AI-powered agriculture</p>
-        <Link to={user ? "/advisor" : "/login"} className="btn-primary">
+        <Link 
+          to={user ? "/advisor" : "/login"} 
+          className="btn-primary"
+          aria-label={user ? "Start a free consultation with the AI" : "Log in to start a free consultation"}
+        >
           Start Free Consultation
         </Link>
       </section>
@@ -423,30 +452,34 @@ export default function Home({ user }) {
               </div>
             </div>
             <div className="footer-section">
+              {/* 
+                ACCESSIBILITY BEST PRACTICE: Footer Navigation
+                Using clear, descriptive link text and aria-labels for footer links.
+              */}
               <h4>Quick Links</h4>
-              <Link to="/">Home</Link>
-              <Link to="/advisor">Advisor</Link>
-              <Link to="/how-it-works">How It Works</Link>
-              <Link to="/schemes">Govt Schemes</Link>
-              <Link to="/dashboard">Dashboard</Link>
-              <Link to="/calendar">Activity Calendar</Link>
-              <Link to="/market-prices">Market Prices</Link>
-              <Link to="/community">Community</Link>
-              <Link to="/share-feedback">Share Feedback</Link>
+              <Link to="/" aria-label="Go to Home Page">Home</Link>
+              <Link to="/advisor" aria-label="Consult the AI Advisor">Advisor</Link>
+              <Link to="/how-it-works" aria-label="How Fasal Saathi helps you">How It Works</Link>
+              <Link to="/schemes" aria-label="View Government Schemes for farmers">Govt Schemes</Link>
+              <Link to="/dashboard" aria-label="Go to your farming dashboard">Dashboard</Link>
+              <Link to="/calendar" aria-label="View your farming activity calendar">Activity Calendar</Link>
+              <Link to="/market-prices" aria-label="Check latest market prices for crops">Market Prices</Link>
+              <Link to="/community" aria-label="Join the community discussion">Community</Link>
+              <Link to="/share-feedback" aria-label="Share your thoughts with us">Share Feedback</Link>
             </div>
             <div className="footer-section">
               <h4>Resources</h4>
-              <Link to="/crop-guide">Crop Guide</Link>
-              <Link to="/weather">Weather Updates</Link>
-              <Link to="/soil-analysis">Soil Analysis</Link>
-              <Link to="/faq">FAQs</Link>
+              <Link to="/crop-guide" aria-label="View the Crop Guide">Crop Guide</Link>
+              <Link to="/weather" aria-label="Check weather updates">Weather Updates</Link>
+              <Link to="/soil-analysis" aria-label="Get soil analysis insights">Soil Analysis</Link>
+              <Link to="/faq" aria-label="Frequently Asked Questions">FAQs</Link>
             </div>
             <div className="footer-section">
               <h4>Company</h4>
-              <Link to="/about">About Us</Link>
-              <Link to="/contact">Contact</Link>
-              <Link to="/privacy-policy">Privacy Policy</Link>
-              <Link to="/terms">Terms of Service</Link>
+              <Link to="/about" aria-label="Learn about Fasal Saathi">About Us</Link>
+              <Link to="/contact" aria-label="Contact our support team">Contact</Link>
+              <Link to="/privacy-policy" aria-label="Read our Privacy Policy">Privacy Policy</Link>
+              <Link to="/terms" aria-label="Read our Terms of Service">Terms of Service</Link>
             </div>
           </div>
           <div className="footer-bottom">

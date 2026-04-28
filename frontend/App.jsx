@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import { SkipLink } from "./NavigationManager";
 
 import { ToastContainer } from "react-toastify";
 import { useFloating, flip, shift, offset, autoUpdate } from "@floating-ui/react";
@@ -209,25 +210,88 @@ function App() {
 
   return (
     <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
+      <SkipLink />
+
        {loading && <Loader fullPage={true} message={<span className="notranslate">Initializing Fasal Saathi...</span>} />}
       {isOffline && (
-        <div className="offline-banner">
+        <div className="offline-banner" role="alert">
           You are currently offline. Running in offline mode using local data.
         </div>
       )}
 
-      <nav className="navbar">
+      {/* 
+        ACCESSIBILITY IMPROVEMENT: Semantic Navigation
+        The 'nav' element defines a landmark region for screen readers.
+        Using Link components from react-router-dom ensures client-side routing.
+      */}
+      <nav className="navbar" role="navigation" aria-label="Main Navigation">
           <div className="nav-left">
-            <Link to="/" className="brand">Fasal Saathi</Link>
+            {/* 
+              Brand Link: Directs users back to the landing page.
+              We ensure this is the first link in the tab order for consistency.
+            */}
+            <Link to="/" className="brand" aria-label="Fasal Saathi Home">Fasal Saathi</Link>
           </div>
 
         <ul className={`nav-center ${isOpen ? "active" : ""}`}>
-          <li><Link to="/" onClick={() => setIsOpen(false)}>Home</Link></li>
-          <li><Link to="/how-it-works" onClick={() => setIsOpen(false)}>Works</Link></li>
-          <li><Link to="/crop-guide" onClick={() => setIsOpen(false)}>Guide</Link></li>
-          <li><Link to="/resources" onClick={() => setIsOpen(false)}>Resources</Link></li>
-          <li><Link to="/about" onClick={() => setIsOpen(false)}>About</Link></li>
-          <li><Link to="/contact" onClick={() => setIsOpen(false)}>Contact</Link></li>
+          {/* 
+            Navigation List: Organized as a list (ul) so screen readers 
+            can announce the number of items in the menu.
+          */}
+          <li>
+            <Link 
+              to="/" 
+              onClick={() => setIsOpen(false)}
+              aria-label="Navigate to Home Page"
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/how-it-works" 
+              onClick={() => setIsOpen(false)}
+              aria-label="Learn how Fasal Saathi works"
+            >
+              Works
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/crop-guide" 
+              onClick={() => setIsOpen(false)}
+              aria-label="View our comprehensive Crop Guide"
+            >
+              Guide
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/resources" 
+              onClick={() => setIsOpen(false)}
+              aria-label="Access farming resources and materials"
+            >
+              Resources
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/about" 
+              onClick={() => setIsOpen(false)}
+              aria-label="Learn about our mission and team"
+            >
+              About
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/contact" 
+              onClick={() => setIsOpen(false)}
+              aria-label="Get in touch with us"
+            >
+              Contact
+            </Link>
+          </li>
         </ul>
 
           <div className="nav-right">
@@ -240,9 +304,9 @@ function App() {
             </button>
 
             {showMoreMenu && (
-              <div className="more-dropdown" onClick={(e) => e.stopPropagation()}>
+              <div className="more-dropdown" onClick={(e) => e.stopPropagation()} role="menu">
                  <div className="dropdown-section">
-                   <label>Language</label>
+                   <label id="language-label">Language</label>
                    <LanguageDropdown
                      options={LANGUAGE_OPTIONS}
                      value={preferredLang}
@@ -250,11 +314,31 @@ function App() {
                        syncLanguage(lang, setPreferredLang);
                        setShowMoreMenu(false);
                      }}
+                     aria-labelledby="language-label"
                    />
                  </div>
                 <div className="dropdown-links">
-                  <Link to="/dashboard" onClick={() => setShowMoreMenu(false)}><FaTachometerAlt /> Dashboard</Link>
-                  <Link to="/community" onClick={() => setShowMoreMenu(false)}><FaComments /> Community</Link>
+                  {/* 
+                    Internal App Links:
+                    Using Dashboard and Community links within the dropdown.
+                    We ensure these are also focusable and labeled correctly.
+                  */}
+                  <Link 
+                    to="/dashboard" 
+                    onClick={() => setShowMoreMenu(false)}
+                    role="menuitem"
+                    aria-label="Go to Farmer Dashboard"
+                  >
+                    <FaTachometerAlt aria-hidden="true" /> Dashboard
+                  </Link>
+                  <Link 
+                    to="/community" 
+                    onClick={() => setShowMoreMenu(false)}
+                    role="menuitem"
+                    aria-label="Join our Community forum"
+                  >
+                    <FaComments aria-hidden="true" /> Community
+                  </Link>
                 </div>
               </div>
             )}
@@ -295,7 +379,17 @@ function App() {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="btn-get-started">Get Started</Link>
+              /* 
+                Login Link: Prominently displayed for guest users.
+                This is often the primary call-to-action in the navbar.
+              */
+              <Link 
+                to="/login" 
+                className="btn-get-started"
+                aria-label="Log in or Sign up to get started"
+              >
+                Get Started
+              </Link>
             )}
           </div>
         </div>
@@ -330,32 +424,49 @@ function App() {
           <Navigate to="/profile-setup" />
         )}
 
-      <Routes>
-        <Route path="/" element={<Home user={user} />} />
-        <Route path="/advisor" element={<Advisor />} />
-        <Route path="/how-it-works" element={<How />} />
-        <Route path="/dashboard" element={!loading && !user ? <Navigate to="/login" state={{ from: location }} replace /> : <Dashboard />} />
-        <Route path="/crop-guide" element={<CropGuide />} />
-        <Route path="/schemes" element={<Schemes />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/contributors" element={<Contributors />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/profile-setup" element={<ProfileSetup user={user} profileCompleted={profileCompleted} />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/share-feedback" element={<Feedback />} />
-        <Route path="/admin/feedback" element={<AdminFeedback />} />
-        <Route path="/market-prices" element={<MarketPrices />} />
-        <Route path="/farming-map" element={<FarmingMap />} />
-        <Route path="/profit-calculator" element={<CropProfitCalculator />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/about" element={<AboutUs />} />
-      </Routes>
+      {/* 
+        MAIN CONTENT AREA:
+        We wrap the Routes in a <main> element with an ID of 'main-content'.
+        This serves as the target for our SkipLink, allowing users to bypass 
+        the header and navigation menu.
+      */}
+      <main id="main-content" tabIndex="-1" style={{ outline: 'none' }}>
+        <Routes>
+          <Route path="/" element={<Home user={user} />} />
+          <Route path="/advisor" element={<Advisor />} />
+          <Route path="/how-it-works" element={<How />} />
+          <Route path="/dashboard" element={!loading && !user ? <Navigate to="/login" state={{ from: location }} replace /> : <Dashboard />} />
+          <Route path="/crop-guide" element={<CropGuide />} />
+          <Route path="/schemes" element={<Schemes />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/contributors" element={<Contributors />} />
+          <Route path="/login" element={<Auth />} />
+          <Route path="/profile-setup" element={<ProfileSetup user={user} profileCompleted={profileCompleted} />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/share-feedback" element={<Feedback />} />
+          <Route path="/admin/feedback" element={<AdminFeedback />} />
+          <Route path="/market-prices" element={<MarketPrices />} />
+          <Route path="/farming-map" element={<FarmingMap />} />
+          <Route path="/profit-calculator" element={<CropProfitCalculator />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/about" element={<AboutUs />} />
+        </Routes>
+      </main>
 
-        {/* Floating Chat Button */}
-        <Link to="/advisor" className="floating-chat-btn" aria-label="Chat Support">
-          <FaComments size={28} />
-        </Link>
+      {/* 
+        Floating Action Button:
+        A fixed-position link for quick access to the AI advisor.
+        We provide a descriptive aria-label and ensure icons are hidden from screen readers
+        to avoid redundant announcements.
+      */}
+      <Link 
+        to="/advisor" 
+        className="floating-chat-btn" 
+        aria-label="Open AI Advisor Chat"
+      >
+        <FaComments size={28} aria-hidden="true" />
+      </Link>
 
         <ToastContainer position="bottom-right" />
       </div>
