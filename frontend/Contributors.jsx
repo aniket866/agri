@@ -2,97 +2,42 @@ import React, { useState, useEffect } from "react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import "./Contributors.css";
 
-const CONTRIBUTORS_DATA = [
-  {
-    id: 1,
-    name: "John Developer",
-    role: "Lead Developer",
-    image: "https://api.github.com/users/octocat/avatar_url",
-    github: "https://github.com/octocat",
-    linkedin: "https://linkedin.com",
-    twitter: "https://twitter.com",
-  },
-  {
-    id: 2,
-    name: "Sarah Designer",
-    role: "UI/UX Designer",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    twitter: "https://twitter.com",
-  },
-  {
-    id: 3,
-    name: "Mike Backend",
-    role: "Backend Developer",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-  },
-  {
-    id: 4,
-    name: "Emma ML Engineer",
-    role: "ML/AI Engineer",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    twitter: "https://twitter.com",
-  },
-  {
-    id: 5,
-    name: "Alex DevOps",
-    role: "DevOps & Infrastructure",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-  },
-  {
-    id: 6,
-    name: "Lisa QA",
-    role: "Quality Assurance",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    twitter: "https://twitter.com",
-  },
-];
-
 export default function Contributors() {
-  const [contributors, setContributors] = useState(CONTRIBUTORS_DATA);
+  const [contributors, setContributors] = useState([]);
   const [filter, setFilter] = useState("All");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Optional: Fetch contributors from GitHub API
-  const fetchGitHubContributors = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        "https://api.github.com/repos/YOUR_ORG/YOUR_REPO/contributors?per_page=100"
-      );
-      if (response.ok) {
-        const data = await response.json();
-        const mappedContributors = data.map((contributor) => ({
-          id: contributor.id,
-          name: contributor.login,
-          role: "Contributor",
-          image: contributor.avatar_url,
-          github: contributor.html_url,
-          contributions: contributor.contributions,
-        }));
-        setContributors(mappedContributors);
+  // Fetch contributors from GitHub API
+  useEffect(() => {
+    const fetchContributors = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          "https://api.github.com/repos/Eshajha19/agri/contributors?per_page=100"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const mappedContributors = data.map((contributor) => ({
+            id: contributor.id,
+            name: contributor.login,
+            role: "Contributor",
+            image: contributor.avatar_url,
+            github: contributor.html_url,
+            contributions: contributor.contributions,
+          }));
+          setContributors(mappedContributors);
+        }
+      } catch (error) {
+        console.error("Error fetching GitHub contributors:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching GitHub contributors:", error);
-      setContributors(CONTRIBUTORS_DATA);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const roles = [
-    "All",
-    ...new Set(CONTRIBUTORS_DATA.map((c) => c.role)),
-  ];
+    fetchContributors();
+  }, []);
+
+  const roles = ["All", ...new Set(contributors.map((c) => c.role))];
 
   const filteredContributors = contributors.filter((contributor) => {
     if (filter === "All") return true;
@@ -132,7 +77,7 @@ export default function Contributors() {
         <p>Join our growing community of developers making a difference in agriculture</p>
         <div className="cta-buttons">
           <a
-            href="https://github.com/YOUR_ORG/YOUR_REPO"
+            href="https://github.com/Eshajha19/agri"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary"
@@ -140,7 +85,7 @@ export default function Contributors() {
             <FaGithub /> Star on GitHub
           </a>
           <a
-            href="https://github.com/YOUR_ORG/YOUR_REPO/blob/main/CONTRIBUTING.md"
+            href="https://github.com/Eshajha19/agri/blob/main/CONTRIBUTING.md"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-secondary"
@@ -244,7 +189,7 @@ export default function Contributors() {
           farmers with AI-driven insights
         </p>
         <a
-          href="https://github.com/YOUR_ORG/YOUR_REPO"
+          href="https://github.com/Eshajha19/agri"
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-outline"

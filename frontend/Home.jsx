@@ -16,7 +16,8 @@ import {
   FaLandmark,
   FaCalendarAlt,
   FaCommentDots,
-  FaCalculator
+  FaCalculator,
+  FaUsers
 } from "react-icons/fa";
 import WeatherAlertBar from "./weather/WeatherAlertBar";
 import WeatherQuickWidget from "./weather/WeatherQuickWidget";
@@ -304,9 +305,48 @@ export default function Home({ user }) {
             </div>
           ))}
         </div>
-      </section>
+       </section>
 
-      <section className="how-section">
+       {/* Contributors Section */}
+       <section className="contributors-home-section">
+         <div className="section-header">
+           <h2>🌟 Our Contributors</h2>
+           <p>Meet the amazing people behind Fasal Saathi</p>
+         </div>
+         <div className="contributors-home-card">
+           <div className="contributors-home-content">
+             <div className="contributors-info">
+               <h3>Built by the Community</h3>
+               <p>
+                 Fasal Saathi is made possible by passionate developers, designers, 
+                 and farmers from around the world. Join our open-source community!
+               </p>
+               <div className="contributors-stats">
+                 <div className="stat">
+                   <span className="stat-number">25+</span>
+                   <span className="stat-label">Contributors</span>
+                 </div>
+                 <div className="stat">
+                   <span className="stat-number">💚</span>
+                   <span className="stat-label">Open Source</span>
+                 </div>
+                 <div className="stat">
+                   <span className="stat-number">🌍</span>
+                   <span className="stat-label">Global Community</span>
+                 </div>
+               </div>
+               <Link to="/contributors" className="btn btn-primary">
+                 <FaUsers /> View All Contributors
+               </Link>
+             </div>
+             <div className="contributors-illustration">
+               <FaUsers className="big-icon" />
+             </div>
+           </div>
+         </div>
+       </section>
+
+       <section className="how-section">
         <div className="section-header">
           <h2>How It Works</h2>
           <p>Three simple steps to smarter farming</p>

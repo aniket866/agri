@@ -21,9 +21,8 @@ import {
   Info,
   Map,
   FlaskConical,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAdvisorStore } from "./stores/advisorStore";
+  } from "lucide-react";
+  import { useAdvisorStore } from "./stores/advisorStore";
 import { useYieldPrediction } from "./hooks/useYieldPrediction";
 import CropDiseaseDetection from "./CropDiseaseDetection";
 import PestManagement from "./PestManagement";

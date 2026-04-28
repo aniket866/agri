@@ -26,8 +26,6 @@ dist-ssr
 .vercel
 .env
 
-# Python
-__pycache__/
-.python-version
-dev-dist/
-dist/
+# Frontend build output
+frontend/build/
+frontend/dist/

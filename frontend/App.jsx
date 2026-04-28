@@ -38,6 +38,7 @@ import CropProfitCalculator from "./CropProfitCalculator";
 import Community from "./Community";
 import ContactUs from "./ContactUs";
 import AboutUs from "./AboutUs";
+import Contributors from "./Contributors";
 
 import { syncOfflineRequests } from "./lib/syncOfflineRequests";
 import { auth, db, isFirebaseConfigured, doc, onSnapshot } from "./lib/firebase";
@@ -217,7 +218,6 @@ function App() {
 
       <nav className="navbar">
           <div className="nav-left">
-            <FaLeaf className="icon" />
             <Link to="/" className="brand">Fasal Saathi</Link>
           </div>
 
