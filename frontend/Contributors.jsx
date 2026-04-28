@@ -17,14 +17,24 @@ export default function Contributors() {
         );
         if (response.ok) {
           const data = await response.json();
-          const mappedContributors = data.map((contributor) => ({
+          // Add founder/owner as first contributor
+          const founder = {
+            id: 0,
+            name: "Esha Jha",
+            role: "Founder & Owner",
+            image: "https://github.com/Eshajha19.png",
+            github: "https://github.com/Eshajha19",
+            contributions: 9999,
+            isFounder: true,
+          };
+          const mappedContributors = [founder, ...data.map((contributor) => ({
             id: contributor.id,
             name: contributor.login,
             role: "Contributor",
             image: contributor.avatar_url,
             github: contributor.html_url,
             contributions: contributor.contributions,
-          }));
+          }))];
           setContributors(mappedContributors);
         }
       } catch (error) {
@@ -111,30 +121,42 @@ export default function Contributors() {
         </div>
       </div>
 
-      {/* CONTRIBUTORS GRID */}
-      <div className="contributors-grid">
-        {loading ? (
-          <div className="loading">Loading contributors...</div>
-        ) : filteredContributors.length > 0 ? (
-          filteredContributors.map((contributor) => (
-            <div key={contributor.id} className="contributor-card">
-              <div className="card-image-container">
-                <img
-                  src={contributor.image}
-                  alt={contributor.name}
-                  className="contributor-image"
-                />
-              </div>
+       {/* CONTRIBUTORS GRID */}
+       <div className="contributors-grid">
+         {loading ? (
+           <div className="loading">Loading contributors...</div>
+         ) : filteredContributors.length > 0 ? (
+           filteredContributors.map((contributor) => (
+             <div
+               key={contributor.id}
+               className={`contributor-card ${contributor.isFounder ? "founder-card" : ""}`}
+             >
+               <div className="card-image-container">
+                 <img
+                   src={contributor.image}
+                   alt={contributor.name}
+                   className="contributor-image"
+                 />
+                 {contributor.isFounder && (
+                   <div className="founder-badge">👑 Founder & Owner</div>
+                 )}
+               </div>
 
-              <div className="card-content">
-                <h3>{contributor.name}</h3>
-                <p className="role">{contributor.role}</p>
+               <div className="card-content">
+                 <h3>{contributor.name}</h3>
+                 <p className="role">{contributor.role}</p>
 
-                {contributor.contributions && (
-                  <p className="contributions">
-                    {contributor.contributions} contributions
-                  </p>
-                )}
+                 {contributor.isFounder && (
+                   <p className="founder-description">
+                     Passionate about leveraging technology to empower farmers and transform agriculture
+                   </p>
+                 )}
+
+                 {contributor.contributions && (
+                   <p className="contributions">
+                     {contributor.contributions} contributions
+                   </p>
+                 )}
 
                 <div className="social-links">
                   {contributor.github && (
