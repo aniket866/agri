@@ -432,7 +432,7 @@
 .timeline-card p  { font-size: 14px; color: #64748b; line-height: 1.65; margin: 0; }
 
 /* Team */
-.about-team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.about-team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .about-team-card {
   background: #fff;
   border: 1.5px solid #e2e8f0;
@@ -488,6 +488,24 @@
   transition: all 0.2s;
 }
 .team-socials a:hover { border-color: #10b981; color: #10b981; background: rgba(16,185,129,0.08); transform: translateY(-2px); }
+/* Founder badge */
+.founder-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+}
+.founder-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+}
 
 /* CTA */
 .about-cta {
