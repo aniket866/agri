@@ -110,7 +110,7 @@ function App() {
   const [showScorecard, setShowScorecard] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
-  const { refs, floatingStyles } = useFloating({
+  const { floatingStyles } = useFloating({
     placement: "bottom-end",
     middleware: [
       offset(8),
@@ -132,7 +132,9 @@ function App() {
       setUserData(null);
       setProfileCompleted(true);
     } catch (error) {
-      console.error("Logout error:", error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Logout error:", error);
+      }
     }
   };
 

@@ -47,10 +47,11 @@ const NavigationManager = () => {
         primaryHeading.style.outline = "none";
 
         // Shift focus to the heading
-        primaryHeading.focus();
-        
-        // Console log for debugging accessibility in development
-        console.log(`[A11y] Focus shifted to: ${primaryHeading.innerText}`);
+         primaryHeading.focus();
+         
+         if (process.env.NODE_ENV !== 'production') {
+           console.log(`[A11y] Focus shifted to: ${primaryHeading.innerText}`);
+         }
       } else {
         // Fallback: If no h1 is found, focus the main container or body
         const mainContent = document.querySelector("main") || document.body;

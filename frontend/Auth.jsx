@@ -116,9 +116,11 @@ const Auth = () => {
         lastLogin: new Date().toISOString()
       }, { merge: true });
 
-      navigate(from, { replace: true });
-    } catch (err) {
-      console.error(err);
+       navigate(from, { replace: true });
+     } catch (err) {
+       if (process.env.NODE_ENV !== 'production') {
+         console.error(err);
+       }
       setError("Failed to sign in with Google.");
     } finally {
       setLoading(false);

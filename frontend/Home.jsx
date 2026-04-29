@@ -72,36 +72,6 @@ const features = [
       desc: "Enterprise-grade security with Firebase authentication",
       category: "Protection",
     },
-    {
-      icon: <FaFlask />,
-      title: "Soil Analysis",
-      desc: "Comprehensive soil health monitoring and nutrient level analysis",
-      category: "Monitoring",
-    },
-    {
-      icon: <FaLeaf />,
-      title: "Crop Recommendations",
-      desc: "Get crop suggestions based on soil profile and regional climate",
-      category: "Recommendations",
-    },
-    {
-      icon: <FaChartLine />,
-      title: "Fertilizer Guidance",
-      desc: "Personalized fertilizer and pesticide recommendations",
-      category: "Recommendations",
-    },
-    {
-      icon: <FaCalculator />,
-      title: "Profit Calculator",
-      desc: "Estimate potential profit before choosing crops with market analysis",
-      category: "Analytics",
-    },
-    {
-      icon: <FaLock />,
-      title: "Secure & Private",
-      desc: "Enterprise-grade security with Firebase authentication",
-      category: "Protection",
-    },
   ];
 
 const stats = [
