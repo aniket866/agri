@@ -42,6 +42,9 @@ export const useAdvisorStore = create((set) => ({
   showFertilizerPopup: false,
   setShowFertilizerPopup: (show) => set({ showFertilizerPopup: show }),
 
+  showPestManagement: false,
+  setShowPestManagement: (show) => set({ showPestManagement: show }),
+
   // Reset store
    resetAdvisorStore: () =>
      set({

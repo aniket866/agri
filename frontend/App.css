@@ -63,9 +63,9 @@ body,
   height: 100%;
   width: 100%;
   font-family: "Poppins", sans-serif;
-  padding-top: var(--navbar-height, 68px);
-  padding-top: max(var(--navbar-height, 68px), calc(constant(safe-area-inset-top) + var(--navbar-height, 68px)));
-  padding-top: max(var(--navbar-height, 68px), calc(env(safe-area-inset-top) + var(--navbar-height, 68px)));
+  padding-top: var(--navbar-height, 80px);
+  padding-top: max(var(--navbar-height, 80px), calc(constant(safe-area-inset-top) + var(--navbar-height, 80px)));
+  padding-top: max(var(--navbar-height, 80px), calc(env(safe-area-inset-top) + var(--navbar-height, 80px)));
   padding-bottom: 0;
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
@@ -99,6 +99,7 @@ body,
   padding-right: calc(48px + constant(safe-area-inset-right));
   padding-right: calc(48px + env(safe-area-inset-right));
   overflow: visible;
+  height: 80px; /* Slightly taller for better breathing room */
 }
 
 .theme-toggle {
@@ -164,16 +165,25 @@ body,
 }
 
 .nav-left .brand {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   color: white;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  color: #a7f3d0;
+  font-size: 26px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .nav-center {
   list-style: none;
   display: flex;
-  gap: 40px;
+  gap: 30px;
   align-items: center;
   position: absolute;
   left: 50%;
@@ -403,10 +413,11 @@ body,
 /* --- Floating Chat Button --- */
 .floating-chat-btn {
   position: fixed;
-  bottom: calc(96px + constant(safe-area-inset-bottom));
-  bottom: calc(96px + env(safe-area-inset-bottom));
-  right: calc(20px + constant(safe-area-inset-right));
-  right: calc(20px + env(safe-area-inset-right));
+  bottom: calc(110px + constant(safe-area-inset-bottom));
+  bottom: calc(110px + env(safe-area-inset-bottom));
+  right: 30px;
+  right: calc(30px + constant(safe-area-inset-right));
+  right: calc(30px + env(safe-area-inset-right));
   background: var(--brand-primary, #2e7d32);
   color: white;
   width: 65px;
@@ -1348,6 +1359,77 @@ html body {
   to { transform: rotate(360deg); }
 }
 
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50px;
+  text-align: center;
+  font-size: 30px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-float:hover {
+  background-color: #128c7e;
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 2px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.whatsapp-float .tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  right: 125%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 14px;
+}
+
+.whatsapp-float:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.nav-whatsapp-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #25d366 !important;
+  font-weight: 700 !important;
+}
+
+.nav-whatsapp-link svg {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+    font-size: 25px;
+  }
+}
 /* Dropdown Animation */
 .animate-dropdown {
   animation: dropdownFade 0.2s ease-out;
@@ -1476,4 +1558,54 @@ html body {
 
 .navbar {
   overflow: visible;
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  right: calc(30px + constant(safe-area-inset-right));
+  right: calc(30px + env(safe-area-inset-right));
+  width: 65px;
+  height: 65px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-float:hover {
+  background-color: #128c7e;
+  transform: scale(1.1) rotate(5deg);
+  color: #fff;
+}
+
+.whatsapp-float .tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  right: 110%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 14px;
+}
+
+.whatsapp-float:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
 }

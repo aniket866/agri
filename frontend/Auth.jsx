@@ -18,6 +18,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -76,6 +77,7 @@ const Auth = () => {
           uid: user.uid,
           displayName: displayName,
           email: email,
+          phoneNumber: phoneNumber,
           createdAt: new Date().toISOString(),
           verified: false
         });
@@ -173,6 +175,21 @@ const Auth = () => {
               />
             </div>
           </div>
+          {!isLogin && (
+            <div className="input-group">
+              <label>Phone Number</label>
+              <div className="input-wrapper">
+                <span className="input-icon" style={{ fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📱</span>
+                <input
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  required={!isLogin}
+                />
+              </div>
+            </div>
+          )}
           <div className="input-group">
             <label>Password</label>
             <div className="input-wrapper">

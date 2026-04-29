@@ -15,6 +15,7 @@ import {
   FaMap,
   FaTachometerAlt,
   FaChevronDown,
+  FaWhatsapp,
   FaUser,
 } from "react-icons/fa";
 
@@ -232,7 +233,10 @@ function App() {
               Brand Link: Directs users back to the landing page.
               We ensure this is the first link in the tab order for consistency.
             */}
-            <Link to="/" className="brand" aria-label="Fasal Saathi Home">Fasal Saathi</Link>
+            <Link to="/" className="brand" aria-label="Fasal Saathi Home">
+              <FaLeaf className="brand-icon" />
+              <span>Fasal Saathi</span>
+            </Link>
           </div>
 
         <ul className={`nav-center ${isOpen ? "active" : ""}`}>
@@ -470,8 +474,19 @@ function App() {
         <FaComments size={28} aria-hidden="true" />
       </Link>
 
-        <ToastContainer position="bottom-right" />
-      </div>
+      <a 
+        href="https://wa.me/14155238886?text=I%20want%20to%20start%20the%20conversation%20for%20real-time%20data%20sharing" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="whatsapp-float"
+        title="Chat with WhatsApp Bot"
+      >
+        <FaWhatsapp />
+        <span className="tooltip">Chat with Bot</span>
+      </a>
+
+      <ToastContainer position="bottom-right" />
+    </div>
   );
 }
 
