@@ -43,6 +43,7 @@ import ContactUs from "./ContactUs";
 import AboutUs from "./AboutUs";
 import Contributors from "./Contributors";
 import SeasonalCropPlanner from "./SeasonalCropPlanner";
+import SoilGuide from "./SoilGuide";
 
 import FAQ from "./FAQ";
 import NotFound from "./NotFound";
@@ -286,66 +287,72 @@ function App() {
              </Link>
            </div>
 
-         <ul className={`nav-center ${isOpen ? "active" : ""}`}>
-           {/* 
-             Navigation List: Organized as a list (ul) so screen readers 
-             can announce the number of items in the menu.
-           */}
-           <li>
-             <Link
-               to="/"
-               onClick={() => setIsOpen(false)}
-               aria-label="Navigate to Home Page"
-             >
-               <span className="notranslate">Home</span>
-             </Link>
-           </li>
-           <li>
-             <Link
-               to="/how-it-works"
-               onClick={() => setIsOpen(false)}
-               aria-label="Learn how Fasal Saathi works"
-             >
-               <span className="notranslate">Works</span>
-             </Link>
-           </li>
-           <li>
-             <Link
-               to="/crop-guide"
-               onClick={() => setIsOpen(false)}
-               aria-label="View our comprehensive Crop Guide"
-             >
-               <span className="notranslate">Guide</span>
-             </Link>
-           </li>
-           <li>
-             <Link
-               to="/resources"
-               onClick={() => setIsOpen(false)}
-               aria-label="Access farming resources and materials"
-             >
-               <span className="notranslate">Resources</span>
-             </Link>
-           </li>
-           <li>
-             <Link
-               to="/about"
-               onClick={() => setIsOpen(false)}
-               aria-label="Learn about our mission and team"
-             >
-               <span className="notranslate">About</span>
-             </Link>
-           </li>
-           <li>
-             <Link
-               to="/contact"
-               onClick={() => setIsOpen(false)}
-               aria-label="Get in touch with us"
-             >
-               <span className="notranslate">Contact</span>
-             </Link>
-           </li>
-          </ul>
+        <ul className={`nav-center ${isOpen ? "active" : ""}`}>
+          <li>
+            <Link
+              to="/"
+              onClick={() => setIsOpen(false)}
+              aria-label="Navigate to Home Page"
+            >
+              <span className="notranslate">Home</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/how-it-works"
+              onClick={() => setIsOpen(false)}
+              aria-label="Learn how Fasal Saathi works"
+            >
+              <span className="notranslate">Works</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/crop-guide"
+              onClick={() => setIsOpen(false)}
+              aria-label="View our comprehensive Crop Guide"
+            >
+              <span className="notranslate">Guide</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/resources"
+              onClick={() => setIsOpen(false)}
+              aria-label="Access farming resources and materials"
+            >
+              <span className="notranslate">Resources</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/about"
+              onClick={() => setIsOpen(false)}
+              aria-label="Learn about our mission and team"
+            >
+              <span className="notranslate">About</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/contact"
+              onClick={() => setIsOpen(false)}
+              aria-label="Get in touch with us"
+            >
+              <span className="notranslate">Contact</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/crop-planner"
+              onClick={() => setIsOpen(false)}
+              className="planner-nav-link"
+              aria-label="Plan your seasonal crops"
+            >
+              <span className="notranslate">Planner</span>
+            </Link>
+          </li>
+        </ul>
  
              <div className="nav-right">
               <button onClick={handleThemeToggle} className="theme-toggle" aria-label="Toggle Theme">
@@ -353,7 +360,6 @@ function App() {
               </button>
 
               <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="more-menu-toggle" aria-label="More Options">
-                <FaBars />
               </button>
 
               {showMoreMenu && (
@@ -505,6 +511,7 @@ function App() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/crop-planner" element={<SeasonalCropPlanner />} />
+          <Route path="/soil-guide" element={<SoilGuide />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />

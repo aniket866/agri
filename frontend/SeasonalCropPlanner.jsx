@@ -64,6 +64,7 @@ export default function SeasonalCropPlanner() {
     <div className="crop-planner-page">
       <div className="planner-header">
         <div className="header-content">
+          <h1>Seasonal Crop Planner</h1>
           <h1><span className="notranslate">Seasonal Crop Planner</span></h1>
           <p>Optimize your yearly farming cycles and reduce crop failure risks with AI-driven insights.</p>
         </div>
@@ -192,10 +193,8 @@ export default function SeasonalCropPlanner() {
 
                         <div className="crop-card-footer">
                           <button className="details-btn">
-                            <span className="notranslate">Detailed Guide</span> <ArrowRight size={16} />
-                          </button>
-                        </div>
-                      </div>
+                            Detailed Guide <ArrowRight size={16} />
+>>>>>>> upstream
                     ))
                   ) : (
                     <div className="no-results glass-card">

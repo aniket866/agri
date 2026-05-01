@@ -103,6 +103,9 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
+    // Add custom parameters if needed
+    provider.setCustomParameters({ prompt: 'select_account' });
+    
     setLoading(true);
     setError("");
     try {
@@ -110,20 +113,38 @@ const Auth = () => {
       const user = result.user;
 
       // Create/Update user in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        lastLogin: new Date().toISOString()
-      }, { merge: true });
+      // We wrap this in a try-catch to differentiate between Auth and Firestore failures
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          lastLogin: new Date().toISOString(),
+          profileCompleted: true // Google users often don't need the full setup
+        }, { merge: true });
+      } catch (fsErr) {
+        console.error("Firestore sync error:", fsErr);
+        // We continue even if Firestore fails, as the user is authenticated
+      }
 
-       navigate(from, { replace: true });
-     } catch (err) {
-       if (process.env.NODE_ENV !== 'production') {
-         console.error(err);
-       }
-      setError("Failed to sign in with Google.");
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error("Google Auth Error:", err);
+      
+      if (err.code === "auth/popup-closed-by-user") {
+        setError(""); // Don't show error if user closed the popup
+      } else if (err.code === "auth/cancelled-by-user") {
+        setError("");
+      } else if (err.code === "auth/operation-not-allowed") {
+        setError("Google sign-in is not enabled in Firebase Console.");
+      } else if (err.code === "auth/popup-blocked") {
+        setError("Sign-in popup was blocked by your browser. Please allow popups for this site.");
+      } else if (err.code === "auth/internal-error") {
+        setError("Internal authentication error. Please try again later.");
+      } else {
+        setError(err.message || "Failed to sign in with Google.");
+      }
     } finally {
       setLoading(false);
     }
