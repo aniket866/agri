@@ -19,6 +19,7 @@ import { useFloating, flip, shift, offset, autoUpdate } from "@floating-ui/react
   FaWhatsapp,
   FaUser,
   FaBook,
+  FaShieldAlt,
 } from "react-icons/fa";
 
 import Advisor from "./Advisor";
@@ -48,6 +49,7 @@ import SoilGuide from "./SoilGuide";
 import CropDiseaseAwareness from "./CropDiseaseAwareness";
 import Helpline from "./Helpline";
 import Glossary from "./Glossary";
+import RiskIndex from "./RiskIndex";
 
 import FAQ from "./FAQ";
 import NotFound from "./NotFound";
@@ -447,6 +449,14 @@ function App() {
                      >
                        <FaBook aria-hidden="true" /> <span className="notranslate">Glossary</span>
                      </Link>
+                     <Link
+                       to="/risk-index"
+                       onClick={() => setShowMoreMenu(false)}
+                       role="menuitem"
+                       aria-label="Access AI Risk Index"
+                     >
+                       <FaShieldAlt aria-hidden="true" /> <span className="notranslate">Risk Index</span>
+                     </Link>
                   </div>
                 </div>
               )}
@@ -564,6 +574,7 @@ function App() {
           <Route path="/disease-awareness" element={<CropDiseaseAwareness />} />
           <Route path="/helpline" element={<Helpline />} />
           <Route path="/glossary" element={<Glossary />} />
+          <Route path="/risk-index" element={<RiskIndex />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />

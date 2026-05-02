@@ -20,7 +20,8 @@ import {
   FaUsers,
   FaBug,
   FaArrowRight,
-  FaBook
+  FaBook,
+  FaShieldAlt
 } from "react-icons/fa";
 import WeatherAlertBar from "./weather/WeatherAlertBar";
 import WeatherQuickWidget from "./weather/WeatherQuickWidget";
@@ -110,6 +111,13 @@ const features = [
       desc: "Learn common farming terms like Mulching, Drip Irrigation, and more in simple language",
       category: "Learning",
       link: "/glossary"
+    },
+    {
+      icon: <FaShieldAlt />,
+      title: "AI Risk Index",
+      desc: "Advanced vulnerability scoring for weather, disease, and market instability",
+      category: "Analytics",
+      link: "/risk-index"
     },
   ];
 

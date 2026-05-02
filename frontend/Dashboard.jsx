@@ -18,6 +18,7 @@ import {
   FaCheckCircle,
   FaBook,
   FaPhoneAlt,
+  FaShieldAlt,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import {
@@ -182,6 +183,7 @@ export default function Dashboard() {
     { label: "Diseases", icon: <FaBug />, link: "/disease-awareness" },
     { label: "Helpline", icon: <FaPhoneAlt />, link: "/helpline" },
     { label: "Glossary", icon: <FaBook />, link: "/glossary" },
+    { label: "Risk Index", icon: <FaShieldAlt />, link: "/risk-index" },
   ];
   const filteredData = yieldData.filter((item) => {
     return (
