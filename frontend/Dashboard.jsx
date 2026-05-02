@@ -16,6 +16,8 @@ import {
   FaComments,
   FaWhatsapp,
   FaCheckCircle,
+  FaBook,
+  FaPhoneAlt,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import {
@@ -179,6 +181,7 @@ export default function Dashboard() {
     { label: "Community", icon: <FaComments />, link: "/community" },
     { label: "Diseases", icon: <FaBug />, link: "/disease-awareness" },
     { label: "Helpline", icon: <FaPhoneAlt />, link: "/helpline" },
+    { label: "Glossary", icon: <FaBook />, link: "/glossary" },
   ];
   const filteredData = yieldData.filter((item) => {
     return (

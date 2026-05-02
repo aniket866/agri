@@ -18,6 +18,7 @@ import { useFloating, flip, shift, offset, autoUpdate } from "@floating-ui/react
   FaChevronUp,
   FaWhatsapp,
   FaUser,
+  FaBook,
 } from "react-icons/fa";
 
 import Advisor from "./Advisor";
@@ -46,6 +47,7 @@ import SeasonalCropPlanner from "./SeasonalCropPlanner";
 import SoilGuide from "./SoilGuide";
 import CropDiseaseAwareness from "./CropDiseaseAwareness";
 import Helpline from "./Helpline";
+import Glossary from "./Glossary";
 
 import FAQ from "./FAQ";
 import NotFound from "./NotFound";
@@ -437,6 +439,14 @@ function App() {
                      >
                        <FaComments aria-hidden="true" /> <span className="notranslate">Community</span>
                      </Link>
+                     <Link
+                       to="/glossary"
+                       onClick={() => setShowMoreMenu(false)}
+                       role="menuitem"
+                       aria-label="View Agricultural Glossary"
+                     >
+                       <FaBook aria-hidden="true" /> <span className="notranslate">Glossary</span>
+                     </Link>
                   </div>
                 </div>
               )}
@@ -553,6 +563,7 @@ function App() {
           <Route path="/soil-guide" element={<SoilGuide />} />
           <Route path="/disease-awareness" element={<CropDiseaseAwareness />} />
           <Route path="/helpline" element={<Helpline />} />
+          <Route path="/glossary" element={<Glossary />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />

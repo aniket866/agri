@@ -19,7 +19,8 @@ import {
   FaCalculator,
   FaUsers,
   FaBug,
-  FaArrowRight
+  FaArrowRight,
+  FaBook
 } from "react-icons/fa";
 import WeatherAlertBar from "./weather/WeatherAlertBar";
 import WeatherQuickWidget from "./weather/WeatherQuickWidget";
@@ -102,6 +103,13 @@ const features = [
       desc: "Instant access to agriculture support, weather emergencies, and insurance helplines",
       category: "Support",
       link: "/helpline"
+    },
+    {
+      icon: <FaBook />,
+      title: "Agri Glossary",
+      desc: "Learn common farming terms like Mulching, Drip Irrigation, and more in simple language",
+      category: "Learning",
+      link: "/glossary"
     },
   ];
 
