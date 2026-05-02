@@ -96,6 +96,13 @@ const features = [
       category: "Protection",
       link: "/login"
     },
+    {
+      icon: <FaPhoneAlt />,
+      title: "Emergency Helpline",
+      desc: "Instant access to agriculture support, weather emergencies, and insurance helplines",
+      category: "Support",
+      link: "/helpline"
+    },
   ];
 
 const stats = [

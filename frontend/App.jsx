@@ -45,6 +45,7 @@ import Contributors from "./Contributors";
 import SeasonalCropPlanner from "./SeasonalCropPlanner";
 import SoilGuide from "./SoilGuide";
 import CropDiseaseAwareness from "./CropDiseaseAwareness";
+import Helpline from "./Helpline";
 
 import FAQ from "./FAQ";
 import NotFound from "./NotFound";
@@ -130,6 +131,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showScorecard, setShowScorecard] = useState(false);
   const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const { floatingStyles } = useFloating({
     placement: "bottom-end",
@@ -353,6 +355,15 @@ function App() {
           </li>
           <li>
             <Link
+              to="/helpline"
+              onClick={() => setIsOpen(false)}
+              aria-label="Emergency farming helplines and support"
+            >
+              <span className="notranslate">Helpline</span>
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/crop-planner"
               onClick={() => setIsOpen(false)}
               className="planner-nav-link"
@@ -361,6 +372,19 @@ function App() {
               <span className="notranslate">Planner</span>
             </Link>
           </li>
+          <li className="mobile-only-language">
+            <div className="language-selector-section">
+              <label className="language-label">Language:</label>
+              <LanguageDropdown 
+                options={LANGUAGE_OPTIONS}
+                value={settings.language}
+                onChange={(lang) => {
+                  setSettings({ ...settings, language: lang });
+                  syncLanguage(lang, setPreferredLang);
+                }}
+              />
+            </div>
+          </li>
         </ul>
  
               <div className="nav-right">
@@ -368,7 +392,13 @@ function App() {
                   {isDarkTheme ? "☀️" : "🌙"}
                 </button>
 
-              <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="more-menu-toggle" aria-label="More Options">
+              <button 
+                onClick={(e) => { e.stopPropagation(); setShowMoreMenu(!showMoreMenu); }} 
+                className={`more-menu-toggle ${showMoreMenu ? 'active' : ''}`} 
+                aria-label="More Options"
+              >
+                <span className="notranslate">More</span>
+                <FaChevronDown className="chevron" />
               </button>
 
               {showMoreMenu && (
@@ -522,6 +552,7 @@ function App() {
           <Route path="/crop-planner" element={<SeasonalCropPlanner />} />
           <Route path="/soil-guide" element={<SoilGuide />} />
           <Route path="/disease-awareness" element={<CropDiseaseAwareness />} />
+          <Route path="/helpline" element={<Helpline />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />

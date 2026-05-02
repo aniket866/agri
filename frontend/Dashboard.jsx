@@ -178,7 +178,7 @@ export default function Dashboard() {
     { label: "Crop Planner", icon: <FaCalendarAlt />, link: "/crop-planner" },
     { label: "Community", icon: <FaComments />, link: "/community" },
     { label: "Diseases", icon: <FaBug />, link: "/disease-awareness" },
-    { label: "How It Works", icon: <FaChartLine />, link: "/how-it-works" },
+    { label: "Helpline", icon: <FaPhoneAlt />, link: "/helpline" },
   ];
   const filteredData = yieldData.filter((item) => {
     return (
