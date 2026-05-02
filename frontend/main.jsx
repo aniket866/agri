@@ -6,6 +6,9 @@ import App from './App.jsx'
 import ErrorBoundary from './ErrorBoundary.jsx'
 import NavigationManager from './NavigationManager.jsx'
 
+// Import i18n configuration for offline translation support
+import './lib/i18n.js'
+
 import { registerSW } from 'virtual:pwa-register'
 
 // Register service worker for offline support

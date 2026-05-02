@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { SkipLink } from "./NavigationManager";
+import { useTranslation } from "react-i18next";
 
 import { ToastContainer } from "react-toastify";
 import { useFloating, flip, shift, offset, autoUpdate } from "@floating-ui/react";
@@ -76,6 +77,9 @@ const LANGUAGE_OPTIONS = [
   { value: "gu", label: "ગુજરાતી", englishName: "gujarati" },
   { value: "kn", label: "ಕನ್ನಡ", englishName: "kannada" },
   { value: "ml", label: "മലയാളം", englishName: "malayalam" },
+  { value: "pa", label: "ਪੰਜਾਬੀ", englishName: "punjabi" },
+  { value: "or", label: "ଓଡ଼ିଆ", englishName: "odia" },
+  { value: "as", label: "অসমীয়া", englishName: "assamese" },
 ];
 
 const getInitialLanguage = () => {
@@ -83,47 +87,6 @@ const getInitialLanguage = () => {
     return localStorage.getItem("preferredLanguage") || "en";
   } catch {
     return "en";
-  }
-};
-
-const syncLanguage = (lang, setLang) => {
-  setLang(lang);
-  try {
-    localStorage.setItem("preferredLanguage", lang);
-  } catch {}
-  
-  // Trigger Google Translate if available
-  if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-    try {
-      // Find the Google Translate select element
-      let select = document.querySelector('.goog-te-combo');
-      if (!select) {
-        // Try to find it in the hidden translate element
-        const gtEl = document.getElementById('google_translate_element');
-        if (gtEl) {
-          select = gtEl.querySelector('select');
-        }
-      }
-      
-      if (select) {
-        select.value = lang;
-        // Trigger change event to force translation
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-      
-      // Also update the cookie for Google Translate
-      if (lang !== 'en') {
-        const cookieValue = '/en/' + lang;
-        const expires = new Date();
-        expires.setFullYear(expires.getFullYear() + 1);
-        document.cookie = 'googtrans=' + cookieValue + '; path=/; expires=' + expires.toUTCString();
-      } else {
-        // Clear cookie for English
-        document.cookie = 'googtrans=; path=/; max-age=0';
-      }
-    } catch (e) {
-      console.error('Google Translate sync error:', e);
-    }
   }
 };
 
@@ -136,8 +99,9 @@ function App() {
   const [profileCompleted, setProfileCompleted] = useState(true);
   const [loading, setLoading] = useState(true);
   const [showScorecard, setShowScorecard] = useState(false);
-  const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+
+  const { i18n } = useTranslation();
 
   const { floatingStyles } = useFloating({
     placement: "bottom-end",
@@ -161,7 +125,7 @@ function App() {
       setUserData(null);
       setProfileCompleted(true);
     } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
+      if (import.meta.env.DEV) {
         console.error("Logout error:", error);
       }
     }
@@ -186,6 +150,12 @@ function App() {
   const handleThemeToggle = () => {
     setIsDarkTheme(!isDarkTheme);
   };
+
+  useEffect(() => {
+    const lang = getInitialLanguage();
+    i18n.changeLanguage(lang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -350,50 +320,94 @@ function App() {
                <span className="notranslate">Contact</span>
              </Link>
            </li>
-           <li className="mobile-only-language">
-            <div className="language-selector-section">
-              <label className="language-label">Language:</label>
-              <LanguageDropdown 
-                options={LANGUAGE_OPTIONS}
-                value={settings.language}
-                onChange={(lang) => {
-                  setSettings({ ...settings, language: lang });
-                  syncLanguage(lang, setPreferredLang);
-                }}
-              />
-            </div>
-          </li>
-        </ul>
- 
-              <div className="nav-right">
-                <button onClick={handleThemeToggle} className="theme-toggle" aria-label="Toggle Theme">
-                  {isDarkTheme ? "☀️" : "🌙"}
-                </button>
+<li className="mobile-only-language">
+             <div className="language-selector-section">
+               <label className="language-label">Language:</label>
+               <LanguageDropdown 
+                 options={LANGUAGE_OPTIONS}
+                 value={settings.language}
+                 onChange={(lang) => {
+                   setSettings({ ...settings, language: lang });
+                   i18n.changeLanguage(lang);
+                   localStorage.setItem("preferredLanguage", lang);
+                   if (navigator.onLine && window.google && window.google.translate) {
+                     try {
+                       let select = document.querySelector('.goog-te-combo');
+                       if (!select) {
+                         const gtEl = document.getElementById('google_translate_element');
+                         if (gtEl) select = gtEl.querySelector('select');
+                       }
+                       if (select) {
+                         select.value = lang;
+                         select.dispatchEvent(new Event('change', { bubbles: true }));
+                       }
+                       if (lang !== 'en') {
+                         const cookieValue = '/en/' + lang;
+                         const expires = new Date();
+                         expires.setFullYear(expires.getFullYear() + 1);
+                         document.cookie = 'googtrans=' + cookieValue + '; path=/; expires=' + expires.toUTCString();
+                       } else {
+                         document.cookie = 'googtrans=; path=/; max-age=0';
+                       }
+                     } catch (e) { console.error('GT sync error:', e); }
+                   }
+                 }}
+               />
+             </div>
+           </li>
+         </ul>
+  
+               <div className="nav-right">
+                 <button onClick={handleThemeToggle} className="theme-toggle" aria-label="Toggle Theme">
+                   {isDarkTheme ? "☀️" : "🌙"}
+                 </button>
 
-              <button 
-                onClick={(e) => { e.stopPropagation(); setShowMoreMenu(!showMoreMenu); }} 
-                className={`more-menu-toggle ${showMoreMenu ? 'active' : ''}`} 
-                aria-label="More Options"
-              >
-                <span className="notranslate">More</span>
-                <FaChevronDown className="chevron" />
-              </button>
+               <button 
+                 onClick={(e) => { e.stopPropagation(); setShowMoreMenu(!showMoreMenu); }} 
+                 className={`more-menu-toggle ${showMoreMenu ? 'active' : ''}`} 
+                 aria-label="More Options"
+               >
+                 <span className="notranslate">More</span>
+                 <FaChevronDown className="chevron" />
+               </button>
 
-              {showMoreMenu && (
-                <div className="more-dropdown" onClick={(e) => e.stopPropagation()} role="menu">
-                  <div className="dropdown-links">
-                    {/* Language Selector in hamburger menu */}
-                    <div className="language-selector-section">
-                      <label className="language-label">Language:</label>
-                      <LanguageDropdown 
-                        options={LANGUAGE_OPTIONS}
-                        value={settings.language}
-                        onChange={(lang) => {
-                          setSettings({ ...settings, language: lang });
-                          syncLanguage(lang, setPreferredLang);
-                        }}
-                      />
-                    </div>
+               {showMoreMenu && (
+                 <div className="more-dropdown" onClick={(e) => e.stopPropagation()} role="menu">
+                   <div className="dropdown-links">
+                     {/* Language Selector in hamburger menu */}
+                     <div className="language-selector-section">
+                       <label className="language-label">Language:</label>
+                       <LanguageDropdown 
+                         options={LANGUAGE_OPTIONS}
+                         value={settings.language}
+                         onChange={(lang) => {
+                           setSettings({ ...settings, language: lang });
+                           i18n.changeLanguage(lang);
+                           localStorage.setItem("preferredLanguage", lang);
+                           if (navigator.onLine && window.google && window.google.translate) {
+                             try {
+                               let select = document.querySelector('.goog-te-combo');
+                               if (!select) {
+                                 const gtEl = document.getElementById('google_translate_element');
+                                 if (gtEl) select = gtEl.querySelector('select');
+                               }
+                               if (select) {
+                                 select.value = lang;
+                                 select.dispatchEvent(new Event('change', { bubbles: true }));
+                               }
+                               if (lang !== 'en') {
+                                 const cookieValue = '/en/' + lang;
+                                 const expires = new Date();
+                                 expires.setFullYear(expires.getFullYear() + 1);
+                                 document.cookie = 'googtrans=' + cookieValue + '; path=/; expires=' + expires.toUTCString();
+                               } else {
+                                 document.cookie = 'googtrans=; path=/; max-age=0';
+                               }
+                             } catch (e) { console.error('GT sync error:', e); }
+                           }
+                         }}
+                       />
+                     </div>
                     {/* 
                       Internal App Links:
                       Using Dashboard and Community links within the dropdown.
