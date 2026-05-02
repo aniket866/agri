@@ -10,6 +10,7 @@ import CropProfitCalculator from "./CropProfitCalculator";
 import FarmingMap from "./FarmingMap";
 import FertilizerRecommendation from "./FertilizerRecommendation";
 import LastUpdated from "./LastUpdated";
+import AgriMarketplace from "./AgriMarketplace";
 import {
   Sun,
   Droplets,
@@ -62,6 +63,8 @@ export default function Advisor() {
     setShowCropDiseaseDetection,
     showPestManagement,
     setShowPestManagement,
+    showAgriMarketplace,
+    setShowAgriMarketplace,
   } = useAdvisorStore();
 
   const {
@@ -285,6 +288,12 @@ export default function Advisor() {
             </div>
             <h3><span className="notranslate">Govt Schemes</span></h3>
             <p>Direct subsidies, insurance, and financial benefits for farmers.</p>
+          </div>
+
+          <div className="card reveal" onClick={() => setShowAgriMarketplace(true)}>
+            <div className="icon">🚜</div>
+            <h3><span className="notranslate">Agri Marketplace</span></h3>
+            <p>Rent or list farm equipment locally. Save costs and earn extra.</p>
           </div>
 
           <div className="card reveal" onClick={() => setShowProfitCalculator(true)}>
@@ -706,6 +715,15 @@ export default function Advisor() {
         <div className="weather-overlay" onClick={() => setShowPestManagement(false)}>
           <div className="weather-popup" onClick={(e) => e.stopPropagation()} style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}>
             <PestManagement onClose={() => setShowPestManagement(false)} />
+          </div>
+        </div>
+      )}
+
+      {showAgriMarketplace && (
+        <div className="weather-overlay" onClick={() => setShowAgriMarketplace(false)}>
+          <div className="agri-modal-wrapper" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn agri-close-btn" onClick={() => setShowAgriMarketplace(false)}>✕</button>
+            <AgriMarketplace onClose={() => setShowAgriMarketplace(false)} />
           </div>
         </div>
       )}

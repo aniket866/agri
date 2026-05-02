@@ -42,25 +42,29 @@ export const useAdvisorStore = create((set) => ({
   showSoilGuide: false,
   setShowSoilGuide: (show) => set({ showSoilGuide: show }),
 
-  showFertilizerPopup: false,
-  setShowFertilizerPopup: (show) => set({ showFertilizerPopup: show }),
+   showFertilizerPopup: false,
+   setShowFertilizerPopup: (show) => set({ showFertilizerPopup: show }),
 
-  // Reset all modals to closed
-  resetAdvisorStore: () =>
-    set({
-      farmers: 0,
-      crops: 0,
-      languages: 0,
-      showWeather: false,
-      showSoilChatbot: false,
-      showSoilAnalysis: false,
-      showSoilGuide: false,
-      showIrrigation: false,
-      showProfitCalculator: false,
-      showFertilizerPopup: false,
-      showFarmingMap: false,
-      showCropDiseaseDetection: false,
-      showPestManagement: false,
-      showComingSoon: false,
-    }),
+   showAgriMarketplace: false,
+   setShowAgriMarketplace: (show) => set({ showAgriMarketplace: show }),
+
+   // Reset all modals to closed
+   resetAdvisorStore: () =>
+     set({
+       farmers: 0,
+       crops: 0,
+       languages: 0,
+       showWeather: false,
+       showSoilChatbot: false,
+       showSoilAnalysis: false,
+       showSoilGuide: false,
+       showIrrigation: false,
+       showProfitCalculator: false,
+       showFertilizerPopup: false,
+       showFarmingMap: false,
+       showCropDiseaseDetection: false,
+       showPestManagement: false,
+       showComingSoon: false,
+       showAgriMarketplace: false,
+     }),
 }));
