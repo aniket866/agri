@@ -48,6 +48,7 @@ import Contributors from "./Contributors";
 import SeasonalCropPlanner from "./SeasonalCropPlanner";
 import SoilGuide from "./SoilGuide";
 import CropDiseaseAwareness from "./CropDiseaseAwareness";
+import CropRotation from "./CropRotation";
 import Helpline from "./Helpline";
 import Glossary from "./Glossary";
 import RiskIndex from "./RiskIndex";
@@ -563,8 +564,9 @@ function App() {
           <Route path="/helpline" element={<Helpline />} />
            <Route path="/glossary" element={<Glossary />} />
            <Route path="/risk-index" element={<RiskIndex />} />
-            <Route path="/blog" element={<Blog />} />
-           <Route path="/blog/:id" element={<BlogDetail />} />
+           <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
+            <Route path="/crop-rotation" element={<CropRotation />} />
            <Route path="/faq" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />
