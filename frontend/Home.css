@@ -281,7 +281,6 @@
   20% { margin-top: 7px; }
   60% { margin-top: -7px; }
   100% { margin-top: 0; }
-/* removed stray closing brace */
 }
 
 /* Cloud Animation Styles */
@@ -359,7 +358,6 @@
   50% { transform: translateY(6px); }
   80% { transform: translateY(-6px); }
   100% { transform: translateY(0); }
-/* removed stray closing brace */
 }
 
 /* Adjust hero section when translation toolbar is present */
