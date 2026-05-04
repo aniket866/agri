@@ -84,6 +84,28 @@ const BLOG_POSTS = [
     readTime: "8 min read",
     thumbnail: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80",
   },
+
+  {
+    id: 9,
+    title: "Precision Farming with AI & Drone Technology",
+    description: "Explore how AI-driven analytics and drone surveillance are transforming agriculture. From crop health monitoring to yield prediction, precision farming helps reduce input costs and increase productivity.",
+    category: "Crop Management",
+    author: "Tech Agri Lab",
+    date: "May 01, 2026",
+    readTime: "7 min read",
+    thumbnail: "https://images.unsplash.com/photo-1506947411487-a56738267384?w=600&q=80",
+  },
+
+  {
+    id: 10,
+    title: "Smart Fertilizer Management for Maximum Yield",
+    description: "Overuse of fertilizers reduces soil fertility. Learn balanced nutrient management techniques, soil testing methods, and crop-specific fertilizer schedules to maximize yield sustainably.",
+    category: "Crop Management",
+    author: "Dr. Vikram Singh",
+    date: "May 03, 2026",
+    readTime: "6 min read",
+    thumbnail: "https://images.unsplash.com/photo-1592982537447-6e4e0c9f4c21?w=600&q=80",
+  },
 ];
 
 const CATEGORIES = ["All", "Crop Management", "Weather", "Government Schemes", "Irrigation", "Pest Management"];
