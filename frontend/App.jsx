@@ -16,7 +16,9 @@ import {
   FaInfoCircle,
   FaBook,
   FaShieldAlt,
+  FaBolt,
 } from "react-icons/fa";
+import { usePerformanceStore } from "./stores/performanceStore";
 
 // Components
 import AdminFeedback from "./AdminFeedback";
@@ -102,6 +104,12 @@ function App() {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  
+  const { liteMode, setLiteMode, detectAndSetLiteMode } = usePerformanceStore();
+
+  useEffect(() => {
+    detectAndSetLiteMode();
+  }, []);
 
   const { i18n } = useTranslation();
   const location = useLocation();
@@ -213,7 +221,7 @@ function App() {
   useNotifications();
 
   return (
-    <div className={`app ${isDarkTheme ? "theme-dark" : ""}`}>
+    <div className={`app ${isDarkTheme ? "theme-dark" : ""} ${liteMode ? "lite-mode" : ""}`}>
       <SkipLink />
       
       {loading && <Loader fullPage={true} message={<span className="notranslate">Initializing Fasal Saathi...</span>} />}
@@ -268,6 +276,21 @@ function App() {
                       localStorage.setItem("preferredLanguage", lang);
                     }}
                   />
+                </div>
+                <div className="performance-toggle-section">
+                  <button 
+                    className={`lite-mode-toggle ${liteMode ? 'active' : ''}`}
+                    onClick={() => setLiteMode(!liteMode)}
+                    role="menuitem"
+                  >
+                    <div className="toggle-info">
+                      <FaBolt className="zap-icon" />
+                      <span>Lite Mode {liteMode ? "ON" : "OFF"}</span>
+                    </div>
+                    <div className="toggle-switch">
+                      <div className="switch-handle" />
+                    </div>
+                  </button>
                 </div>
                 <Link to="/dashboard" onClick={() => setShowMoreMenu(false)} role="menuitem"><FaTachometerAlt /> Dashboard</Link>
                 <Link to="/community" onClick={() => setShowMoreMenu(false)} role="menuitem"><FaComments /> Community</Link>

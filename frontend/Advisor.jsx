@@ -41,13 +41,14 @@ import {
   Book,
   CloudSun,
   QrCode,
-  Award, 
-  Star, 
+  Award,
+  Star,
   ThumbsUp,
   X
 } from "lucide-react";
 import { FaSync } from "react-icons/fa";
 import { useAdvisorStore } from "./stores/advisorStore";
+import { usePerformanceStore } from "./stores/performanceStore";
 import { useYieldPrediction } from "./hooks/useYieldPrediction";
 import { auth, db } from "./lib/firebase";
 import { generateBankPDF, generateCSV } from "./utils/exportService";
@@ -112,6 +113,8 @@ export default function Advisor() {
     showSeedVerifier,
     setShowSeedVerifier,
   } = useAdvisorStore();
+
+  const { liteMode } = usePerformanceStore();
 
   const {
     yieldForm,
