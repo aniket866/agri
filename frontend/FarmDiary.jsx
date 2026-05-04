@@ -359,4 +359,5 @@ export default function FarmDiary({ onClose }) {
       )}
     </div>
   );
+  
 }
