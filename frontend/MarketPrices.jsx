@@ -104,33 +104,42 @@ const MarketPrices = () => {
 
       <section className="market-filters">
         <div className="search-wrapper">
-          <Search className="search-icon" size={20} />
+          <Search className="search-icon" size={20} aria-hidden="true" />
           <input 
             type="text" 
             placeholder="Search crop or mandi..." 
             value={filters.search}
             onChange={handleSearchChange}
+            aria-label="Search by crop or mandi name"
           />
         </div>
         <div className="filter-group">
           <div className="select-wrapper">
-            <Filter size={16} className="select-icon" />
-            <select value={filters.state} onChange={handleStateChange}>
+            <Filter size={16} className="select-icon" aria-hidden="true" />
+            <select 
+              value={filters.state} 
+              onChange={handleStateChange}
+              aria-label="Filter market by state"
+            >
               {states.map(s => <option key={s} value={s}>{s === "All" ? "All States" : s}</option>)}
             </select>
           </div>
           <div className="select-wrapper">
-            <BarChart3 size={16} className="select-icon" />
-            <select value={filters.commodity} onChange={handleCommodityChange}>
+            <BarChart3 size={16} className="select-icon" aria-hidden="true" />
+            <select 
+              value={filters.commodity} 
+              onChange={handleCommodityChange}
+              aria-label="Filter market by crop"
+            >
               {commodities.map(c => <option key={c} value={c}>{c === "All" ? "All Crops" : c}</option>)}
             </select>
           </div>
         </div>
       </section>
 
-      <div className="market-stats-grid">
+      <div className="market-stats-grid" role="status" aria-live="polite">
         <div className="stat-card price-up">
-          <div className="stat-icon-wrap">
+          <div className="stat-icon-wrap" aria-hidden="true">
             <TrendingUp size={24} />
           </div>
           <div className="stat-content">
@@ -140,7 +149,7 @@ const MarketPrices = () => {
           </div>
         </div>
         <div className="stat-card highest">
-          <div className="stat-icon-wrap">
+          <div className="stat-icon-wrap" aria-hidden="true">
             <Info size={24} />
           </div>
           <div className="stat-content">
@@ -150,7 +159,7 @@ const MarketPrices = () => {
           </div>
         </div>
         <div className="stat-card recommendation">
-          <div className="stat-icon-wrap">
+          <div className="stat-icon-wrap" aria-hidden="true">
             <MapPin size={24} />
           </div>
           <div className="stat-content">
@@ -162,15 +171,19 @@ const MarketPrices = () => {
       </div>
 
       <div className="market-main-content">
-        <div className="content-tabs">
+        <div className="content-tabs" role="tablist">
           <button 
             className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'list'}
             onClick={() => setActiveTab('list')}
           >
             Mandi Wise Prices
           </button>
           <button 
             className={`tab-btn ${activeTab === 'trends' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'trends'}
             onClick={() => setActiveTab('trends')}
           >
             Price Trends
@@ -225,7 +238,11 @@ const MarketPrices = () => {
                 <span className="price-current">Current: ₹{trends[trends.length-1]?.price}</span>
               </div>
             </div>
-            <div className="chart-wrapper">
+            <div 
+              className="chart-wrapper"
+              role="img"
+              aria-label={`Area chart showing 7-day price trend for ${selectedCommodity}.`}
+            >
               <ResponsiveContainer width="100%" height={350}>
                 <AreaChart data={trends}>
                   <defs>

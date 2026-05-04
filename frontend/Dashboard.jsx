@@ -41,6 +41,7 @@ export default function Dashboard() {
   const [selectedCrop, setSelectedCrop] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedSeason, setSelectedSeason] = useState("");
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
@@ -219,9 +220,14 @@ export default function Dashboard() {
           </div>
            <div className="quick-actions-row">
              {quickActions.map((action, idx) => (
-               <Link to={action.link} key={idx} className="quick-action-btn">
+               <Link 
+                 to={action.link} 
+                 key={idx} 
+                 className="quick-action-btn"
+                 aria-label={`Navigate to ${action.label}`}
+               >
                  {action.icon}
-                 <span className="notranslate">{action.label}</span>
+                 <span className="notranslate" aria-hidden="true">{action.label}</span>
                </Link>
              ))}
            </div>
@@ -273,17 +279,28 @@ export default function Dashboard() {
             </div>
             <div className="recommendations-list">
               {recommendations.map((rec, idx) => (
-                <div className="recommendation-card" key={idx}>
-                  <div className="rec-icon">{rec.icon}</div>
-                  <div className="rec-content">
-                    <div className="rec-header-row">
-                      <span className="rec-title">{rec.title}</span>
-                      <span className="rec-tag">{rec.tag}</span>
-                    </div>
-                    <p className="rec-desc">{rec.description}</p>
-                  </div>
-                  <FaArrowRight className="rec-arrow" />
-                </div>
+                 <div 
+                   className="recommendation-card" 
+                   key={idx}
+                   role="button"
+                   tabIndex={0}
+                   aria-label={`Recommendation: ${rec.title}. ${rec.description}`}
+                   onKeyDown={(e) => {
+                     if (e.key === 'Enter' || e.key === ' ') {
+                       e.preventDefault();
+                     }
+                   }}
+                 >
+                   <div className="rec-icon" aria-hidden="true">{rec.icon}</div>
+                   <div className="rec-content">
+                     <div className="rec-header-row">
+                       <span className="rec-title">{rec.title}</span>
+                       <span className="rec-tag">{rec.tag}</span>
+                     </div>
+                     <p className="rec-desc">{rec.description}</p>
+                   </div>
+                   <FaArrowRight className="rec-arrow" aria-hidden="true" />
+                 </div>
               ))}
             </div>
           </div>
@@ -323,6 +340,7 @@ export default function Dashboard() {
             </Link>
           </div>
 
+
           <div className="dashboard-section-card whatsapp-settings-card">
             <div className="section-card-header">
               <h2><FaWhatsapp /> WhatsApp Alerts</h2>
@@ -337,6 +355,7 @@ export default function Dashboard() {
                   placeholder="+91 9876543210" 
                   value={phoneNumber} 
                   onChange={(e) => setPhoneNumber(e.target.value)}
+                  aria-label="Phone number with country code"
                 />
               </div>
               <div className="checkbox-group">
@@ -356,9 +375,13 @@ export default function Dashboard() {
                 {isUpdating ? "Saving..." : "Save Settings"}
               </button>
               {updateMsg && (
-                <p className={`update-msg ${updateMsg.includes("Error") ? "error" : "success"}`}>
-                  {updateMsg.includes("success") && <FaCheckCircle />} {updateMsg}
-                </p>
+                 <p 
+                   className={`update-msg ${updateMsg.includes("Error") ? "error" : "success"}`}
+                   role="status"
+                   aria-live="polite"
+                 >
+                   {updateMsg.includes("success") && <FaCheckCircle aria-hidden="true" />} {updateMsg}
+                 </p>
               )}
             </div>
           </div>
@@ -376,27 +399,33 @@ export default function Dashboard() {
 
         {/* 🔽 FILTERS HERE */}
         <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
-          <select value={selectedCrop}
+          <select 
+            value={selectedCrop}
             onChange={(e) => setSelectedCrop(e.target.value)}
             style={{ padding: "8px", borderRadius: "6px" }}
+            aria-label="Filter by crop"
           >
             <option value="">All Crops</option>
             <option value="Wheat">Wheat</option>
             <option value="Rice">Rice</option>
           </select>
 
-          <select value={selectedRegion}
+          <select 
+            value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}
             style={{ padding: "8px", borderRadius: "6px" }}
+            aria-label="Filter by region"
           >
             <option value="">All Regions</option>
             <option value="North">North</option>
             <option value="South">South</option>
           </select>
 
-          <select value={selectedSeason}
+          <select 
+            value={selectedSeason}
             onChange={(e) => setSelectedSeason(e.target.value)}
             style={{ padding: "8px", borderRadius: "6px" }}
+            aria-label="Filter by season"
           >
             <option value="">All Seasons</option>
             <option value="Kharif">Kharif</option>
@@ -453,7 +482,11 @@ export default function Dashboard() {
               }}
             >
               <h4 style={{ marginBottom: "10px" }}>Yield Trend</h4>
-              <div style={{ width: "100%", height: 350 }}>
+              <div 
+                 style={{ width: "100%", height: 350 }}
+                 role="img"
+                 aria-label="Line chart showing crop yield trend over years. The trend shows a steady increase from 30 in 2019 to 60 in 2022."
+               >
                 {filteredData.length === 0 ? (
                   <div style={{ textAlign: "center", padding: "40px" }}>
                     No data found. Try changing filters.
@@ -489,7 +522,11 @@ export default function Dashboard() {
               }}
             >
               <h4 style={{ marginBottom: "10px" }}>Crop Comparison</h4>
-              <div style={{ width: "100%", height: 350 }}>
+              <div 
+                 style={{ width: "100%", height: 350 }}
+                 role="img"
+                 aria-label="Bar chart comparing yields across different crops."
+               >
                 <ResponsiveContainer>
                   <BarChart data={yieldData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />

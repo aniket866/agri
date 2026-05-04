@@ -185,8 +185,6 @@ export default function FarmDiary({ onClose }) {
 
   // Separate upcoming reminders
   const today = new Date().toISOString().split('T')[0];
-  const upcomingReminders = entries.filter(e => !e.isCompleted && e.reminderDate && e.reminderDate >= today);
-
   const getActivityIcon = (type) => {
     switch(type) {
       case 'Sowing': return <Sprout size={16} />;
@@ -361,7 +359,7 @@ export default function FarmDiary({ onClose }) {
           })}
         </div>
       )}
-
+      
       {/* Advisor Button and Modal */}
       <button className="advisor-fab" onClick={() => setShowAdvisor(true)} aria-label="Open AI Advisor">
         <MessageCircle size={24} />

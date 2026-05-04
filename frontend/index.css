@@ -100,9 +100,22 @@ html {
 }
 
 /* Accessible focus styling */
-:where(a, button, select, input, textarea):focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 2px;
+:where(a, button, select, input, textarea, [tabindex="0"]):focus-visible {
+  outline: 3px solid var(--brand-primary);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--focus-ring);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 #root {

@@ -147,8 +147,9 @@ const RiskIndex = () => {
             <input 
               type="range" name="weather" value={inputs.weather} 
               onChange={handleInputChange} min="0" max="100" 
+              aria-label="Weather risk percentage"
             />
-            <span className="val">{inputs.weather}%</span>
+            <span className="val" aria-hidden="true">{inputs.weather}%</span>
           </div>
           
           <div className="control-section">
@@ -156,8 +157,9 @@ const RiskIndex = () => {
             <input 
               type="range" name="disease" value={inputs.disease} 
               onChange={handleInputChange} min="0" max="100" 
+              aria-label="Disease threat percentage"
             />
-            <span className="val">{inputs.disease}%</span>
+            <span className="val" aria-hidden="true">{inputs.disease}%</span>
           </div>
 
           <div className="control-section">
@@ -165,8 +167,9 @@ const RiskIndex = () => {
             <input 
               type="range" name="water" value={inputs.water} 
               onChange={handleInputChange} min="0" max="100" 
+              aria-label="Water scarcity percentage"
             />
-            <span className="val">{inputs.water}%</span>
+            <span className="val" aria-hidden="true">{inputs.water}%</span>
           </div>
 
           <div className="control-section">
@@ -174,8 +177,9 @@ const RiskIndex = () => {
             <input 
               type="range" name="market" value={inputs.market} 
               onChange={handleInputChange} min="0" max="100" 
+              aria-label="Market volatility percentage"
             />
-            <span className="val">{inputs.market}%</span>
+            <span className="val" aria-hidden="true">{inputs.market}%</span>
           </div>
 
           <div className="control-section">
@@ -183,8 +187,9 @@ const RiskIndex = () => {
             <input 
               type="range" name="historical" value={inputs.historical} 
               onChange={handleInputChange} min="0" max="100" 
+              aria-label="Historical failure percentage"
             />
-            <span className="val">{inputs.historical}%</span>
+            <span className="val" aria-hidden="true">{inputs.historical}%</span>
           </div>
           
           <div className="info-box">
@@ -199,7 +204,11 @@ const RiskIndex = () => {
               <h3>Vulnerability Distribution</h3>
               <p>Multi-factor risk analysis visualization</p>
             </div>
-            <div className="radar-wrapper">
+            <div 
+               className="radar-wrapper"
+               role="img"
+               aria-label="Radar chart showing vulnerability distribution across weather, disease, water, market, and history."
+             >
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart cx="50%" cy="50%" outerRadius="80%" data={riskData}>
                   <PolarGrid stroke="#e2e8f0" />
@@ -224,12 +233,20 @@ const RiskIndex = () => {
             </div>
             <div className="recommendations-grid">
               {recommendations.map((rec, i) => (
-                <div key={i} className={`rec-card ${rec.type}`}>
-                  <div className="rec-type">{rec.type}</div>
+                <div 
+                  key={i} 
+                  className={`rec-card ${rec.type}`}
+                  role="article"
+                  aria-label={`Mitigation Strategy: ${rec.title}. ${rec.desc}`}
+                >
+                  <div className="rec-type" aria-hidden="true">{rec.type}</div>
                   <h4>{rec.title}</h4>
                   <p>{rec.desc}</p>
-                  <button className="rec-action">
-                    Take Action <ArrowRight size={14} />
+                  <button 
+                    className="rec-action"
+                    aria-label={`Take action on ${rec.title}`}
+                  >
+                    Take Action <ArrowRight size={14} aria-hidden="true" />
                   </button>
                 </div>
               ))}

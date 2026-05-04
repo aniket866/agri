@@ -45,24 +45,32 @@ export const useAdvisorStore = create((set) => ({
    showFertilizerPopup: false,
    setShowFertilizerPopup: (show) => set({ showFertilizerPopup: show }),
 
-   showAgriMarketplace: false,
-   setShowAgriMarketplace: (show) => set({ showAgriMarketplace: show }),
+  showFarmDiary: false,
+  setShowFarmDiary: (show) => set({ showFarmDiary: show }),
 
-   showQRTraceability: false,
-   setShowQRTraceability: (show) => set({ showQRTraceability: show }),
+  showAgriMarketplace: false,
+  setShowAgriMarketplace: (show) => set({ showAgriMarketplace: show }),
 
-   showFarmPlanner3D: false,
-   setShowFarmPlanner3D: (show) => set({ showFarmPlanner3D: show }),
+  showAgriLMS: false,
+  setShowAgriLMS: (show) => set({ showAgriLMS: show }),
 
-   showFarmDiary: false,
-   setShowFarmDiary: (show) => set({ showFarmDiary: show }),
+  showQRTraceability: false,
+  setShowQRTraceability: (show) => set({ showQRTraceability: show }),
 
-   showAgriLMS: false,
-   setShowAgriLMS: (show) => set({ showAgriLMS: show }),
+  showFarmPlanner3D: false,
+  setShowFarmPlanner3D: (show) => set({ showFarmPlanner3D: show }),
+
+  showCropRotation: false,
+  setShowCropRotation: (show) => set({ showCropRotation: show }),
 
    showForecast: false,
    setShowForecast: (show) => set({ showForecast: show }),
 
+   showExpertStatus: false,
+   setShowExpertStatus: (show) => set({ showExpertStatus: show }),
+
+   showBankReport: false,
+   setShowBankReport: (show) => set({ showBankReport: show }),
    // New modals for advisor cards
    showCropRotation: false,
    setShowCropRotation: (show) => set({ showCropRotation: show }),
@@ -96,6 +104,9 @@ export const useAdvisorStore = create((set) => ({
        showFarmDiary: false,
        showAgriLMS: false,
        showForecast: false,
+       showExpertStatus: false,
+       showBankReport: false,
+       showCropRotation: false,
        showCropRotation: false,
        showP2PChat: false,
        showSmartCropRecommendation: false,

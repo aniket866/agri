@@ -150,10 +150,6 @@ const Community = () => {
 
       setNewPost({ content: "", category: "general" });
       setShowCreateModal(false);
-      
-      // Award points for creating a post
-      const userRef = doc(db, "users", currentUser.uid);
-      await updateDoc(userRef, { reputation: increment(10) });
     } catch (err) {
       console.error("Error creating post:", err);
     }
@@ -231,10 +227,6 @@ const Community = () => {
       setNewComment("");
       // Refresh comments locally for now or use another listener
       openComments(showCommentsModal);
-
-      // Award points for commenting
-      const userRef = doc(db, "users", currentUser.uid);
-      await updateDoc(userRef, { reputation: increment(5) });
     } catch (err) {
       console.error("Error adding comment:", err);
     }
