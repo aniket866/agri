@@ -27,6 +27,64 @@
   background: var(--card-bg, #fff) !important;
 }
 
+/* Guest Banner */
+.guest-banner {
+  background: #fff8e1;
+  border-bottom: 1px solid #ffe082;
+  padding: 10px 24px;
+  position: fixed;
+  top: 70px; /* Right below navbar */
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideDownBanner 0.5s ease-out;
+}
+
+.theme-dark .guest-banner {
+  background: #1e1b0c;
+  border-bottom-color: #3e3814;
+}
+
+.guest-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: #856404;
+}
+
+.theme-dark .guest-banner-content {
+  color: #ffd54f;
+}
+
+.banner-icon {
+  font-size: 1.2rem;
+}
+
+.banner-link {
+  color: #2e7d32;
+  font-weight: 700;
+  text-decoration: underline;
+  margin-left: 4px;
+}
+
+.theme-dark .banner-link {
+  color: #4ade80;
+}
+
+@keyframes slideDownBanner {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+/* Adjust app padding when banner is present */
+.app:has(.guest-banner) {
+  padding-top: calc(var(--navbar-height, 70px) + 42px);
+}
+
 html.goog-translate {
   padding-top: 0 !important;
 }

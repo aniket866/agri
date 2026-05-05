@@ -17,6 +17,7 @@ import {
   FaBook,
   FaShieldAlt,
   FaBolt,
+  FaUserSecret,
 } from "react-icons/fa";
 import { usePerformanceStore } from "./stores/performanceStore";
 
@@ -92,6 +93,18 @@ const getInitialLanguage = () => {
   }
 };
 
+const GuestBanner = ({ onSignUp }) => (
+  <div className="guest-banner">
+    <div className="guest-banner-content">
+      <FaUserSecret className="banner-icon" />
+      <span>
+        <strong>Guest Session Active:</strong> Explore the platform freely! 
+        <Link to="/auth" className="banner-link"> Sign Up</Link> to save your progress permanently.
+      </span>
+    </div>
+  </div>
+);
+
 function App() {
   const scorecardRef = useRef(null);
   const [settings, setSettings] = useState({ language: getInitialLanguage() });
@@ -131,6 +144,10 @@ function App() {
               const data = userDoc.data();
               setUserData(data);
               setProfileCompleted(data.profileCompleted === true);
+            } else if (currentUser.isAnonymous) {
+              // Guest user might not have a profile doc yet
+              setUserData({ displayName: "Guest Farmer", isAnonymous: true });
+              setProfileCompleted(true);
             } else {
               setUserData(null);
               setProfileCompleted(false);
@@ -255,6 +272,7 @@ function App() {
   return (
     <div className={`app ${isDarkTheme ? "theme-dark" : ""} ${liteMode ? "lite-mode" : ""}`}>
       <SkipLink />
+      {user?.isAnonymous && <GuestBanner />}
       
       {loading && <Loader fullPage={true} message={<span className="notranslate">Initializing Fasal Saathi...</span>} />}
       
@@ -377,7 +395,7 @@ function App() {
         </button>
       </nav>
 
-      {!loading && user && !user.emailVerified && location.pathname !== "/login" && (
+      {!loading && user && !user.isAnonymous && !user.emailVerified && location.pathname !== "/login" && (
         <div className="verification-overlay">
           <div className="verification-card">
             <div className="verify-icon">✉️</div>
