@@ -2,13 +2,16 @@
 import os
 import io
 import json
+import collections
+import itertools
+import threading
 import logging
 import re
 import joblib
 import hashlib
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 
 from fastapi import FastAPI, HTTPException, Request, Form, Query, Response
@@ -247,6 +250,9 @@ class ReportRequest(BaseModel):
     profit: str = Field(..., max_length=50)
     season: str = Field(..., max_length=50)
 
+class SeedVerifyRequest(BaseModel):
+    code: str = Field(..., min_length=4, max_length=100)
+
 # --- ML Pipeline Initialization ---
 router = ModelRouter(default_model="xgboost")
 
@@ -281,14 +287,103 @@ except Exception as e:
     model_lag = None
 
 # --- Static Notifications Storage ---
-static_notifications = [
-    {
-        "id": 1,
-        "type": "weather",
-        "message": "🌧️ Heavy rainfall expected in your region today.",
-        "time": datetime.now().isoformat()
-    }
-]
+#
+# Problems with the original bare list:
+#
+# 1. Unbounded growth — every trigger_whatsapp_alert call appended an entry
+#    that was never removed.  After weeks in production the list could hold
+#    thousands of entries, all serialised and sent to every client on every
+#    GET /api/notifications poll.
+#
+# 2. Duplicate IDs under concurrency — `len(list) + 1` is not atomic.  Two
+#    concurrent trigger-alert requests could both read the same length and
+#    produce entries with identical IDs, silently corrupting any client-side
+#    deduplication keyed on id.
+#
+# Fix — NotificationStore:
+#
+# • collections.deque(maxlen=MAX_NOTIFICATIONS) caps memory at a fixed
+#   ceiling.  When the deque is full, the oldest entry is automatically
+#   evicted before the new one is appended — no manual cleanup needed.
+#
+# • itertools.count() produces a strictly monotonically increasing integer
+#   sequence.  In CPython, next() on a count object is effectively atomic
+#   for the GIL-protected use case here, so two concurrent appends always
+#   get distinct IDs.
+#
+# • threading.Lock() serialises append() so the read-then-increment
+#   sequence is never interleaved across threads.
+#
+# • get_recent() filters by a TTL window so the response payload stays
+#   small even when the deque is at capacity.
+
+# Maximum number of triggered-alert entries kept in memory at any time.
+# Oldest entries are evicted automatically when this ceiling is reached.
+_MAX_NOTIFICATIONS = 200
+
+# How long a triggered-alert entry remains visible to clients.
+_NOTIFICATION_TTL_HOURS = 24
+
+
+class NotificationStore:
+    """
+    Thread-safe, bounded, TTL-aware store for in-process notifications.
+
+    Parameters
+    ----------
+    maxlen : int
+        Hard cap on the number of entries held in memory.  When full,
+        the oldest entry is evicted before the new one is appended.
+    ttl_hours : int
+        Entries older than this many hours are excluded from get_recent().
+    """
+
+    def __init__(self, maxlen: int = _MAX_NOTIFICATIONS, ttl_hours: int = _NOTIFICATION_TTL_HOURS):
+        self._deque: collections.deque = collections.deque(maxlen=maxlen)
+        self._lock = threading.Lock()
+        self._counter = itertools.count(start=1)
+        self._ttl = timedelta(hours=ttl_hours)
+
+    def append(self, alert_type: str, message: str) -> dict:
+        """
+        Add a new notification entry and return it.
+
+        The ID is assigned from a monotonically increasing counter so
+        concurrent calls always produce distinct values.
+        """
+        with self._lock:
+            entry = {
+                "id": next(self._counter),
+                "type": alert_type,
+                "message": message,
+                "time": datetime.now().isoformat(),
+            }
+            self._deque.append(entry)
+        return entry
+
+    def get_recent(self) -> list:
+        """
+        Return all entries newer than the configured TTL, oldest first.
+
+        Takes a snapshot under the lock so callers always see a consistent
+        view even if append() is running concurrently.
+        """
+        cutoff = datetime.now() - self._ttl
+        with self._lock:
+            snapshot = list(self._deque)
+        return [
+            e for e in snapshot
+            if datetime.fromisoformat(e["time"]) >= cutoff
+        ]
+
+
+# Seed the store with the initial weather advisory that was previously
+# hard-coded in the bare list.
+_notification_store = NotificationStore()
+_notification_store.append(
+    alert_type="weather",
+    message="🌧️ Heavy rainfall expected in your region today.",
+)
 
 # --- Routes ---
 
@@ -375,7 +470,7 @@ async def predict_yield_trend(payload: YieldInput, request: Request):
         data = payload.data
         if len(data) != 5:
             raise ValueError("Exactly 5 values are required")
-        temp = data[::-1]  # reverse once
+        temp = list(data)
         trend = []
         for _ in range(5):
             features = temp[:5]
@@ -400,14 +495,21 @@ def get_notifications(
     water_coverage: int = Query(default=None, ge=0, le=100),
     season: str = Query(default=None)
 ):
-    """Generate dynamic farm advisory alerts + static ones."""
+    """
+    Return recent triggered-alert notifications combined with dynamic
+    farm advisory alerts generated from the query parameters.
+
+    Only notifications newer than the store's TTL window are included,
+    so the response payload stays small regardless of how long the
+    process has been running.
+    """
     dynamic_alerts = generate_alerts(
         crop=crop,
         irrigation_count=irrigation_count,
         water_coverage=water_coverage,
         season=season
     )
-    return {"success": True, "data": static_notifications + dynamic_alerts}
+    return {"success": True, "data": _notification_store.get_recent() + dynamic_alerts}
 
 # --- WhatsApp Service Endpoints ---
 #
@@ -787,6 +889,31 @@ async def simulate_climate(request: Request, data: SimulationRequest):
         "risk_level": "High" if total_yield_impact < -0.15 else "Medium" if total_yield_impact < -0.05 else "Low",
         "recommendation": "Switch to heat-tolerant varieties" if data.temp_delta > 2 else "Ensure adequate irrigation" if data.rain_delta < -20 else "Conditions remain viable"
     }
+
+@app.post("/api/seeds/verify")
+@limiter.limit("10/minute")
+async def verify_seed(data: SeedVerifyRequest):
+    """
+    Verifies seed authenticity against a trusted batch registry.
+    This replaces the unsafe client-side string matching.
+    """
+    # Mock registry for demonstration
+    # In production, this would query a Firestore collection or SQL database
+    registry = {
+        "FS-AUTH-2026-X1": {"status": "authentic", "crop": "Rice", "batch": "2026-X1"},
+        "FS-AUTH-2026-W2": {"status": "authentic", "crop": "Wheat", "batch": "2026-W2"},
+        "FS-INVALID-999": {"status": "invalid", "reason": "Blacklisted - Reported Counterfeit"},
+        "TEST-EXPIRED-123": {"status": "invalid", "reason": "Expired - Shelf life exceeded"},
+    }
+    
+    code = data.code.upper().strip()
+    result = registry.get(code)
+    
+    if result:
+        return {"success": True, "code": code, **result}
+    
+    # If not found in registry
+    return {"success": True, "code": code, "status": "not_found"}
 
 if __name__ == "__main__":
     import uvicorn

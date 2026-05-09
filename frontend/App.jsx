@@ -3,6 +3,7 @@ import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useFloating, flip, shift, offset, autoUpdate } from "@floating-ui/react";
 import {
   FaComments,
   FaLeaf,
@@ -113,7 +114,7 @@ const applyGoogleTranslate = (langCode) => {
   return false;
 };
 
-const GuestBanner = () => (
+const GuestBanner = ({ onSignUp }) => (
   <div className="guest-banner">
     <div className="guest-banner-content">
       <FaUserSecret className="banner-icon" />
@@ -302,7 +303,7 @@ function App() {
           <li><Link to="/" onClick={() => setIsOpen(false)}><FaHome /> Home</Link></li>
           <li><Link to="/advisor" onClick={() => setIsOpen(false)}><FaComments /> Chat</Link></li>
           <li><Link to="/how-it-works" onClick={() => setIsOpen(false)}><FaInfoCircle /> How It Works</Link></li>
-          <li><Link to="/crop-guide" onClick={() => setIsOpen(false)}><FaLeaf className="icon" /> Crop Guide</Link></li>
+          <li><Link to="/crop-guide" onClick={() => setIsOpen(false)}>Crop Guide</Link></li>
           <li><Link to="/resources" onClick={() => setIsOpen(false)}>Resources</Link></li>
         </ul>
 
