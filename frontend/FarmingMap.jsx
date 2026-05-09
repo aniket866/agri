@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+// Import Leaflet.markercluster CSS and JS
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import 'leaflet.markercluster';
 import {
   FaMapMarkerAlt, FaCloud, FaLeaf, FaExclamationTriangle,
   FaTimes, FaLocationArrow, FaDownload, FaWifi, FaDatabase,
@@ -41,6 +45,14 @@ export default function FarmingMap() {
   const drawPoints   = useRef([]);
   const tileLayers   = useRef({});
   const syncTimeout  = useRef(null);
+  
+  // Marker cluster groups for better performance with thousands of markers
+  const clusterGroups = useRef({
+    weather: null,
+    crops: null,
+    alerts: null,
+    fields: null
+  });
 
   // Core state
   const [userLocation,    setUserLocation]    = useState(null);
@@ -105,18 +117,80 @@ export default function FarmingMap() {
     if (map.current) { map.current.remove(); map.current = null; }
 
     try {
-      const m = L.map(mapContainer.current, { preferCanvas: true, zoomControl: false })
+      const m = L.map(mapContainer.current, { 
+        preferCanvas: true, 
+        zoomControl: false,
+        // Additional performance optimizations
+        fadeAnimation: false,
+        markerZoomAnimation: false
+      })
         .setView([20.5937, 78.9629], 5);
       L.control.zoom({ position: 'bottomright' }).addTo(m);
       map.current = m;
       addTileLayer(m, 'satellite');
+      
+      // Initialize marker cluster groups
+      clusterGroups.current.weather = L.markerClusterGroup({
+        // Performance optimizations for cluster groups
+        maxClusterRadius: 80, // pixels
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        disableClusteringAtZoom: 17, // Don't cluster at high zoom levels
+        chunkedLoading: true, // Load markers in chunks for better performance
+        chunkInterval: 200, // Process markers in chunks every 200ms
+        chunkDelay: 50, // Delay between chunks
+        singleMarkerMode: false
+      });
+      
+      clusterGroups.current.crops = L.markerClusterGroup({
+        maxClusterRadius: 80,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        disableClusteringAtZoom: 17,
+        chunkedLoading: true,
+        chunkInterval: 200,
+        chunkDelay: 50,
+        singleMarkerMode: false
+      });
+      
+      clusterGroups.current.alerts = L.markerClusterGroup({
+        maxClusterRadius: 100, // Larger radius for alerts to group them more
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        disableClusteringAtZoom: 16,
+        chunkedLoading: true,
+        chunkInterval: 200,
+        chunkDelay: 50,
+        singleMarkerMode: false
+      });
+      
+      // Add cluster groups to map (initially all added)
+      clusterGroups.current.weather.addTo(m);
+      clusterGroups.current.crops.addTo(m);
+      clusterGroups.current.alerts.addTo(m);
+      
     } catch (err) {
       setMapError('Failed to initialise map. Please refresh.');
     }
 
     return () => {
       if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
-      if (map.current) { map.current.remove(); map.current = null; }
+      if (map.current) { 
+        // Clean up cluster groups
+        Object.values(clusterGroups.current).forEach(group => {
+          if (group) {
+            group.clearLayers();
+            if (map.current.hasLayer(group)) {
+              map.current.removeLayer(group);
+            }
+          }
+        });
+        map.current.remove(); 
+        map.current = null; 
+      }
     };
   }, []);
 
@@ -177,69 +251,193 @@ export default function FarmingMap() {
   useEffect(() => {
     if (!map.current || !userLocation) return;
     if (markersRef.current.user) map.current.removeLayer(markersRef.current.user);
-    markersRef.current.user = L.marker(userLocation, { icon: ICONS.user() })
+    markersRef.current.user = L.marker(userLocation, { 
+      icon: ICONS.user(),
+      // User marker should not be clustered
+      zIndexOffset: 1000 // Keep user marker on top
+    })
       .addTo(map.current)
       .bindPopup(`<div class="map-popup"><strong>📍 Your Location</strong><p>Lat: ${userLocation[0].toFixed(5)}</p><p>Lng: ${userLocation[1].toFixed(5)}</p></div>`);
   }, [userLocation]);
 
   // ── Weather markers ──────────────────────────────────────────────────────
   useEffect(() => {
-    if (!map.current || !userLocation) return;
-    (markersRef.current.weather || []).forEach(m => map.current.removeLayer(m));
+    if (!map.current || !userLocation || !clusterGroups.current.weather) return;
+    
+    // Clear previous weather markers from cluster group
+    clusterGroups.current.weather.clearLayers();
+    
     if (!showWeather) return;
-    const pts = [
-      { lat: userLocation[0]+0.02, lng: userLocation[1]+0.02, title: 'Station N', temp: 28, humidity: 65, cond: 'Partly Cloudy' },
-      { lat: userLocation[0]-0.02, lng: userLocation[1]+0.02, title: 'Station S', temp: 26, humidity: 70, cond: 'Cloudy' },
-    ];
-    markersRef.current.weather = pts.map(p =>
-      L.marker([p.lat, p.lng], { icon: ICONS.weather() }).addTo(map.current)
+    
+    // Generate more weather markers for testing clustering (in real app, this would come from API)
+    const pts = [];
+    const markerCount = 50; // Simulate many markers for clustering
+    
+    for (let i = 0; i < markerCount; i++) {
+      const lat = userLocation[0] + (Math.random() - 0.5) * 0.1;
+      const lng = userLocation[1] + (Math.random() - 0.5) * 0.1;
+      const title = `Weather Station ${i + 1}`;
+      const temp = 20 + Math.floor(Math.random() * 15);
+      const humidity = 50 + Math.floor(Math.random() * 40);
+      const conditions = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Rainy', 'Stormy'];
+      const cond = conditions[Math.floor(Math.random() * conditions.length)];
+      
+      pts.push({ 
+        lat, lng, title, temp, humidity, cond,
+        id: `weather-${i}`,
+        type: 'weather'
+      });
+    }
+    
+    // Add markers to cluster group
+    pts.forEach(p => {
+      const marker = L.marker([p.lat, p.lng], { 
+        icon: ICONS.weather(),
+        title: p.title
+      })
         .bindPopup(`<div class="map-popup weather-popup"><strong>${p.title}</strong><p>🌡️ ${p.temp}°C</p><p>💧 ${p.humidity}%</p><p>☁️ ${p.cond}</p></div>`)
-        .on('click', () => setSelectedMarker(p))
-    );
+        .on('click', () => setSelectedMarker(p));
+      
+      clusterGroups.current.weather.addLayer(marker);
+    });
+    
+    // Store reference to markers
+    markersRef.current.weather = pts;
   }, [showWeather, userLocation]);
 
   // ── Crop markers ─────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!map.current || !userLocation) return;
-    (markersRef.current.crops || []).forEach(m => map.current.removeLayer(m));
+    if (!map.current || !userLocation || !clusterGroups.current.crops) return;
+    
+    // Clear previous crop markers from cluster group
+    clusterGroups.current.crops.clearLayers();
+    
     if (!showCrops) return;
-    const pts = [
-      { lat: userLocation[0]-0.02, lng: userLocation[1]-0.02, title: 'Paddy Field A', crop: 'Paddy', area: '5 acres', status: 'Good' },
-      { lat: userLocation[0]+0.02, lng: userLocation[1]+0.02, title: 'Wheat Field B', crop: 'Wheat', area: '3 acres', status: 'Good' },
-      { lat: userLocation[0]+0.01, lng: userLocation[1]-0.03, title: 'Vegetable Plot C', crop: 'Vegetables', area: '2 acres', status: 'Needs Attention' },
-    ];
-    markersRef.current.crops = pts.map(p =>
-      L.marker([p.lat, p.lng], { icon: ICONS.crop() }).addTo(map.current)
+    
+    // Generate more crop markers for testing clustering (in real app, this would come from API)
+    const pts = [];
+    const markerCount = 100; // Simulate many crop markers for clustering
+    
+    const crops = ['Paddy', 'Wheat', 'Corn', 'Soybean', 'Cotton', 'Vegetables', 'Fruits'];
+    const statuses = ['Good', 'Needs Water', 'Needs Fertilizer', 'Harvest Ready', 'Disease Detected'];
+    
+    for (let i = 0; i < markerCount; i++) {
+      const lat = userLocation[0] + (Math.random() - 0.5) * 0.2;
+      const lng = userLocation[1] + (Math.random() - 0.5) * 0.2;
+      const crop = crops[Math.floor(Math.random() * crops.length)];
+      const title = `${crop} Field ${String.fromCharCode(65 + (i % 26))}`;
+      const area = `${1 + Math.floor(Math.random() * 10)} acres`;
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      pts.push({ 
+        lat, lng, title, crop, area, status,
+        id: `crop-${i}`,
+        type: 'crop'
+      });
+    }
+    
+    // Add markers to cluster group
+    pts.forEach(p => {
+      const marker = L.marker([p.lat, p.lng], { 
+        icon: ICONS.crop(),
+        title: p.title
+      })
         .bindPopup(`<div class="map-popup crop-popup"><strong>${p.title}</strong><p>🌾 ${p.crop}</p><p>📍 ${p.area}</p><p>✅ ${p.status}</p></div>`)
-        .on('click', () => setSelectedMarker(p))
-    );
+        .on('click', () => setSelectedMarker(p));
+      
+      clusterGroups.current.crops.addLayer(marker);
+    });
+    
+    // Store reference to markers
+    markersRef.current.crops = pts;
   }, [showCrops, userLocation]);
 
   // ── Alert markers ────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!map.current || !userLocation) return;
-    (markersRef.current.alerts || []).forEach(m => map.current.removeLayer(m));
+    if (!map.current || !userLocation || !clusterGroups.current.alerts) return;
+    
+    // Clear previous alert markers from cluster group
+    clusterGroups.current.alerts.clearLayers();
+    
     if (!showAlerts) return;
-    const pts = [
-      { lat: userLocation[0]-0.03, lng: userLocation[1]+0.03, title: 'Heavy Rain Alert', severity: 'High', message: 'Heavy rainfall expected in 2 hrs' },
-    ];
-    markersRef.current.alerts = pts.map(p =>
-      L.marker([p.lat, p.lng], { icon: ICONS.alert() }).addTo(map.current)
+    
+    // Generate more alert markers for testing clustering (in real app, this would come from API)
+    const pts = [];
+    const markerCount = 30; // Simulate alert markers for clustering
+    
+    const alertTypes = ['Heavy Rain', 'Drought Warning', 'Pest Alert', 'Flood Warning', 'Frost Alert', 'Heat Wave'];
+    const severities = ['Low', 'Medium', 'High', 'Critical'];
+    
+    for (let i = 0; i < markerCount; i++) {
+      const lat = userLocation[0] + (Math.random() - 0.5) * 0.15;
+      const lng = userLocation[1] + (Math.random() - 0.5) * 0.15;
+      const alertType = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+      const title = `${alertType} Alert`;
+      const severity = severities[Math.floor(Math.random() * severities.length)];
+      const messages = [
+        'Expected in next 24 hours',
+        'Immediate action required',
+        'Monitor conditions closely',
+        'Take preventive measures',
+        'Evacuation may be necessary'
+      ];
+      const message = messages[Math.floor(Math.random() * messages.length)];
+      
+      pts.push({ 
+        lat, lng, title, severity, message,
+        id: `alert-${i}`,
+        type: 'alert',
+        alertType
+      });
+    }
+    
+    // Add markers to cluster group
+    pts.forEach(p => {
+      const marker = L.marker([p.lat, p.lng], { 
+        icon: ICONS.alert(),
+        title: p.title
+      })
         .bindPopup(`<div class="map-popup alert-popup"><strong>⚠️ ${p.title}</strong><p>Severity: ${p.severity}</p><p>${p.message}</p></div>`)
-        .on('click', () => setSelectedMarker(p))
-    );
+        .on('click', () => setSelectedMarker(p));
+      
+      clusterGroups.current.alerts.addLayer(marker);
+    });
+    
+    // Store reference to markers
+    markersRef.current.alerts = pts;
   }, [showAlerts, userLocation]);
 
   // ── Saved field boundaries on map ────────────────────────────────────────
   useEffect(() => {
     if (!map.current) return;
-    (markersRef.current.fieldPolygons || []).forEach(l => map.current.removeLayer(l));
+    
+    // Clear previous field polygons
+    (markersRef.current.fieldPolygons || []).forEach(l => {
+      if (l && map.current) {
+        map.current.removeLayer(l);
+      }
+    });
+    
     if (!showFields) return;
+    
+    // Create field polygons with performance optimizations
     markersRef.current.fieldPolygons = savedFields.map(f => {
       if (!f.points?.length) return null;
-      const poly = L.polygon(f.points, { color: '#4caf50', fillColor: '#4caf50', fillOpacity: 0.2, weight: 2 })
+      
+      // Optimize polygon rendering for performance
+      const poly = L.polygon(f.points, { 
+        color: '#4caf50', 
+        fillColor: '#4caf50', 
+        fillOpacity: 0.2, 
+        weight: 2,
+        // Performance optimizations
+        smoothFactor: 1.0, // Less smoothing for better performance
+        noClip: false,
+        bubblingMouseEvents: false
+      })
         .addTo(map.current)
         .bindPopup(`<div class="map-popup crop-popup"><strong>🟢 ${f.name}</strong><p>Points: ${f.points.length}</p><p>Saved: ${new Date(f.savedAt).toLocaleDateString()}</p></div>`);
+      
       return poly;
     }).filter(Boolean);
   }, [savedFields, showFields]);

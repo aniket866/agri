@@ -437,3 +437,78 @@
   .map-layers-panel { display: none; }
   .fm-status-bar    { font-size: 0.72rem; padding: 0.35rem 0.85rem; }
 }
+/* ─── Marker Cluster Custom Styles ───────────────────────────────────── */
+.marker-cluster-small {
+  background-color: rgba(74, 222, 128, 0.6);
+}
+.marker-cluster-small div {
+  background-color: rgba(74, 222, 128, 0.9);
+  color: #0f1923;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(96, 165, 250, 0.6);
+}
+.marker-cluster-medium div {
+  background-color: rgba(96, 165, 250, 0.9);
+  color: #0f1923;
+}
+
+.marker-cluster-large {
+  background-color: rgba(249, 115, 22, 0.6);
+}
+.marker-cluster-large div {
+  background-color: rgba(249, 115, 22, 0.9);
+  color: #0f1923;
+}
+
+/* Custom cluster icon styles for different marker types */
+.weather-cluster .marker-cluster-small {
+  background-color: rgba(37, 99, 235, 0.6);
+}
+.weather-cluster .marker-cluster-small div {
+  background-color: rgba(37, 99, 235, 0.9);
+}
+
+.crop-cluster .marker-cluster-small {
+  background-color: rgba(22, 163, 74, 0.6);
+}
+.crop-cluster .marker-cluster-small div {
+  background-color: rgba(22, 163, 74, 0.9);
+}
+
+.alert-cluster .marker-cluster-small {
+  background-color: rgba(220, 38, 38, 0.6);
+}
+.alert-cluster .marker-cluster-small div {
+  background-color: rgba(220, 38, 38, 0.9);
+}
+
+/* Leaflet marker cluster overrides */
+.leaflet-cluster-anim .leaflet-marker-icon, 
+.leaflet-cluster-anim .leaflet-marker-shadow {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+}
+
+/* Performance optimizations for clusters */
+.marker-cluster {
+  background-clip: padding-box;
+  border-radius: 20px;
+}
+.marker-cluster div {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  margin-top: 5px;
+  text-align: center;
+  border-radius: 15px;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-cluster span {
+  line-height: 30px;
+}
