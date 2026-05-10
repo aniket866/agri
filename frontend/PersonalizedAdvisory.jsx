@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import "./PersonalizedAdvisory.css";
 import { generateRecommendations } from "./utils/recommendationEngine";
 
+import { useAuthStore } from "./stores/authStore";
+
 /**
  * Derive the current Indian agricultural season from the calendar month
  * when the user's profile does not have an explicit season set.
@@ -20,38 +22,39 @@ function deriveSeasonFromCalendar() {
   return "Rabi"; // November – February
 }
 
-export default function PersonalizedRecommendations({ userProfile, weatherData }) {
+export default function PersonalizedRecommendations({ weatherData }) {
+  const { userData } = useAuthStore();
 
   /**
    * Resolve the season to pass to the recommendation engine.
    *
    * Priority:
-   *   1. userProfile.season  — explicit user preference (most accurate)
+   *   1. userData.season  — explicit user preference (most accurate)
    *   2. Calendar fallback   — derived from current month so seasonal
    *                            recommendation branches never stay silent
    *                            when the profile field is missing.
    */
   const resolvedSeason = useMemo(() => {
-    if (userProfile?.season) return userProfile.season;
+    if (userData?.season) return userData.season;
     return deriveSeasonFromCalendar();
-  }, [userProfile?.season]);
+  }, [userData?.season]);
 
   const recommendations = useMemo(() => {
-    if (!userProfile) return [];
+    if (!userData) return [];
 
     return generateRecommendations({
       weatherData,
-      cropType: userProfile.cropType,
+      cropType: userData.cropType,
       season: resolvedSeason,
     });
 
-  }, [userProfile, weatherData, resolvedSeason]);
+  }, [userData, weatherData, resolvedSeason]);
 
   return (
     <div className="personalized-section">
       <h2>🎯 Personalized Recommendations</h2>
 
-      {!userProfile ? (
+      {!userData ? (
         <p>Complete your profile to get recommendations.</p>
       ) : recommendations.length === 0 ? (
         <p>No recommendations available.</p>

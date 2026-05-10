@@ -3,6 +3,7 @@ import { auth, db, isFirebaseConfigured } from "./lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaGlobe, FaMapMarkerAlt, FaSeedling, FaArrowRight } from "react-icons/fa";
+import { useAuthStore } from "./stores/authStore";
 import "./ProfileSetup.css";
 
 const LANGUAGE_OPTIONS = [
@@ -20,7 +21,8 @@ const LANGUAGE_OPTIONS = [
   { value: "as", label: "🇮🇳 অসমীয়া" },
 ];
 
-const ProfileSetup = ({ user, profileCompleted }) => {
+const ProfileSetup = () => {
+  const { user, profileCompleted } = useAuthStore();
   const [name, setName] = useState("");
   const [language, setLanguage] = useState("en");
   const [role, setRole] = useState("farmer");

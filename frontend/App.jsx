@@ -72,7 +72,6 @@ import Loader from "./Loader";
 import useNotifications from "./Notifications";
 import Footer from "./components/Footer";
 import { SkipLink } from "./NavigationManager";
-import { useTheme } from "./ThemeContext";
 import ErrorBoundary from "./ErrorBoundary";
 
 // Libs
