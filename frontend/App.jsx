@@ -24,6 +24,8 @@ import {
   FaMoon,
 } from "react-icons/fa";
 import { usePerformanceStore } from "./stores/performanceStore";
+import { useAuthStore } from "./stores/authStore";
+import { useUiStore } from "./stores/uiStore";
 
 // Components - Lazily Loaded for better bundle size
 const AdminFeedback = React.lazy(() => import("./AdminFeedback"));
@@ -133,18 +135,16 @@ const GuestBanner = ({ onSignUp }) => (
 
 function App() {
   const scorecardRef = useRef(null);
-  const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
-  const [isOpen, setIsOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
-  const [user, setUser] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [profileCompleted, setProfileCompleted] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [showScorecard, setShowScorecard] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   
+  // Zustand Stores
+  const { user, userData, loading, profileCompleted, setUser, setUserData, setLoading, setProfileCompleted } = useAuthStore();
+  const { 
+    theme, toggleTheme, preferredLang, setPreferredLang, 
+    isNavOpen, setNavOpen, isOffline, setIsOffline,
+    showMoreMenu, setShowMoreMenu, showScorecard, setShowScorecard,
+    showScrollTop, setShowScrollTop
+  } = useUiStore();
+
   const { liteMode, setLiteMode, detectAndSetLiteMode } = usePerformanceStore();
 
   useEffect(() => {
@@ -155,8 +155,6 @@ function App() {
   const location = useLocation();
 
   useNotifications();
-
-  /* ---------------- THEME SYSTEM (Moved to ThemeProvider) ---------------- */
 
   /* ---------------- LANGUAGE AUTO-TRANS ---------------- */
   useEffect(() => {
@@ -174,8 +172,6 @@ function App() {
       return;
     }
 
-    // Safety timeout — if Firebase auth never responds (revoked key, network issue),
-    // force loading=false so the app doesn't hang forever on the spinner.
     const safetyTimer = setTimeout(() => {
       setLoading(false);
     }, 5000);
@@ -209,7 +205,7 @@ function App() {
       }
     });
     return () => { clearTimeout(safetyTimer); unsubscribeAuth(); };
-  }, []);
+  }, [setUser, setUserData, setLoading, setProfileCompleted]);
 
   // E2EE Key Generation Sync
   useEffect(() => {
@@ -251,7 +247,7 @@ function App() {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, []);
+  }, [setIsOffline]);
 
   // Scroll to Top logic
   useEffect(() => {
@@ -260,7 +256,7 @@ function App() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [setShowScrollTop]);
 
   // Click outside scorecard
   useEffect(() => {
@@ -271,9 +267,9 @@ function App() {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setShowScorecard]);
 
-  const handleNavToggle = () => setIsOpen(!isOpen);
+  const handleNavToggle = () => setNavOpen(!isNavOpen);
   const handleThemeToggle = toggleTheme;
   const handleLogout = async () => {
     try {
@@ -298,17 +294,17 @@ function App() {
         </div>
       )}
 
-      <nav className={`navbar ${isOpen ? "menu-open" : ""}`} role="navigation" aria-label="Main Navigation">
+      <nav className={`navbar ${isNavOpen ? "menu-open" : ""}`} role="navigation" aria-label="Main Navigation">
         <div className="nav-left">
           <Link to="/" className="brand">Fasal Saathi</Link>
         </div>
 
-        <ul className={`nav-center ${isOpen ? "active" : ""}`}>
-          <li><Link to="/" onClick={() => setIsOpen(false)}><FaHome /> Home</Link></li>
-          <li><Link to="/advisor" onClick={() => setIsOpen(false)}><FaComments /> Chat</Link></li>
-          <li><Link to="/how-it-works" onClick={() => setIsOpen(false)}><FaInfoCircle /> How It Works</Link></li>
-          <li><Link to="/crop-guide" onClick={() => setIsOpen(false)}>Crop Guide</Link></li>
-          <li><Link to="/resources" onClick={() => setIsOpen(false)}>Resources</Link></li>
+        <ul className={`nav-center ${isNavOpen ? "active" : ""}`}>
+          <li><Link to="/" onClick={() => setNavOpen(false)}><FaHome /> Home</Link></li>
+          <li><Link to="/advisor" onClick={() => setNavOpen(false)}><FaComments /> Chat</Link></li>
+          <li><Link to="/how-it-works" onClick={() => setNavOpen(false)}><FaInfoCircle /> How It Works</Link></li>
+          <li><Link to="/crop-guide" onClick={() => setNavOpen(false)}>Crop Guide</Link></li>
+          <li><Link to="/resources" onClick={() => setNavOpen(false)}>Resources</Link></li>
         </ul>
 
         <div className="nav-right">

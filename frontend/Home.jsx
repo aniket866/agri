@@ -24,6 +24,7 @@ import {
 import WeatherAlertBar from "./weather/WeatherAlertBar";
 import WeatherQuickWidget from "./weather/WeatherQuickWidget";
 import ErrorBoundary from "./ErrorBoundary";
+import { useAuthStore } from "./stores/authStore";
 import "./Home.css";
 
 const features = [
@@ -198,7 +199,8 @@ const Birds = () => (
 );
 
 // ─── Home component ───────────────────────────────────────────────────────────
-export default function Home({ user }) {
+export default function Home() {
+  const { user } = useAuthStore();
   const [statValues, setStatValues] = React.useState([0, 0, 0, 0]);
 
   React.useEffect(() => {
