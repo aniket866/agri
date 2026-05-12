@@ -24,7 +24,6 @@ import {
 import WeatherAlertBar from "./weather/WeatherAlertBar";
 import WeatherQuickWidget from "./weather/WeatherQuickWidget";
 import ErrorBoundary from "./ErrorBoundary";
-import { useAuthStore } from "./stores/authStore";
 import "./Home.css";
 
 const features = [
