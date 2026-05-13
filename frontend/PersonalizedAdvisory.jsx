@@ -16,6 +16,8 @@ import {
   Calendar
 } from "lucide-react";
 
+import { useAuthStore } from "./stores/authStore";
+
 /**
  * Derive the current Indian agricultural season from the calendar month
  * when the user's profile does not have an explicit season set.
@@ -34,73 +36,33 @@ function deriveSeasonFromCalendar() {
   return "Rabi"; // November – February
 }
 
-const TYPE_CONFIG = {
-  warning: {
-    icon: AlertTriangle,
-    label: "Weather Alert",
-    gradient: "linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)",
-    borderColor: "#ef4444",
-    iconBg: "#fef2f2",
-    iconColor: "#ef4444",
-  },
-  heat: {
-    icon: ThermometerSun,
-    label: "Heat Advisory",
-    gradient: "linear-gradient(135deg, #fffbeb 0%, #fde68a 100%)",
-    borderColor: "#f59e0b",
-    iconBg: "#fffbeb",
-    iconColor: "#f59e0b",
-  },
-  frost: {
-    icon: Snowflake,
-    label: "Frost Warning",
-    gradient: "linear-gradient(135deg, #f0f9ff 0%, #bae6fd 100%)",
-    borderColor: "#0ea5e9",
-    iconBg: "#f0f9ff",
-    iconColor: "#0ea5e9",
-  },
-  crop: {
-    icon: Wheat,
-    label: "Crop Care",
-    gradient: "linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%)",
-    borderColor: "#22c55e",
-    iconBg: "#f0fdf4",
-    iconColor: "#22c55e",
-  },
-  season: {
-    icon: Calendar,
-    label: "Seasonal Tip",
-    gradient: "linear-gradient(135deg, #faf5ff 0%, #e9d5ff 100%)",
-    borderColor: "#a855f7",
-    iconBg: "#faf5ff",
-    iconColor: "#a855f7",
-  },
-};
+export default function PersonalizedRecommendations({ weatherData }) {
+  const { userData } = useAuthStore();
 
-function getCropIcon(cropType) {
-  const crop = (cropType || "").toLowerCase();
-  if (crop.includes("paddy") || crop.includes("rice")) return Wheat;
-  if (crop.includes("cotton")) return Sprout;
-  return Leaf;
-}
-
-export default function PersonalizedRecommendations({ userProfile, weatherData }) {
-
+  /**
+   * Resolve the season to pass to the recommendation engine.
+   *
+   * Priority:
+   *   1. userData.season  — explicit user preference (most accurate)
+   *   2. Calendar fallback   — derived from current month so seasonal
+   *                            recommendation branches never stay silent
+   *                            when the profile field is missing.
+   */
   const resolvedSeason = useMemo(() => {
-    if (userProfile?.season) return userProfile.season;
+    if (userData?.season) return userData.season;
     return deriveSeasonFromCalendar();
-  }, [userProfile?.season]);
+  }, [userData?.season]);
 
   const recommendations = useMemo(() => {
-    if (!userProfile) return [];
+    if (!userData) return [];
 
     return generateRecommendations({
       weatherData,
-      cropType: userProfile.cropType,
+      cropType: userData.cropType,
       season: resolvedSeason,
     });
 
-  }, [userProfile, weatherData, resolvedSeason]);
+  }, [userData, weatherData, resolvedSeason]);
 
   if (!userProfile) {
     return (
@@ -143,6 +105,66 @@ export default function PersonalizedRecommendations({ userProfile, weatherData }
   });
 
   return (
+    <section className="personalized-section">
+
+      <div className="section-header">
+        <h2>🎯 Personalized Recommendations</h2>
+
+        {weatherData && (
+          <div className="weather-summary">
+            <span>🌡 {weatherData.temp}°C</span>
+            <span>💧 {weatherData.humidity}%</span>
+            <span>🌧 {weatherData.condition}</span>
+          </div>
+        )}
+      </div>
+
+      {!userData ? (
+        <p>Complete your profile to get recommendations.</p>
+      ) : recommendations.length === 0 ? (
+
+        <div className="empty-state">
+          <p>No recommendations available right now.</p>
+        </div>
+
+      ) : (
+
+        <div className="recommendation-grid">
+
+          {recommendations.map((rec, index) => (
+            <div
+              key={index}
+              className={`recommendation-card ${rec.type}`}
+            >
+
+              <div className="card-top">
+
+                <div className="rec-icon">
+                  {rec.icon}
+                </div>
+
+                <span className={`priority ${rec.priority || "medium"}`}>
+                  {rec.priority || "medium"}
+                </span>
+
+              </div>
+
+              <h3>
+                {rec.title || rec.type}
+              </h3>
+
+              <p>{rec.text}</p>
+
+              <button className="learn-btn">
+                Learn More →
+              </button>
+
+            </div>
+          ))}
+
+        </div>
+      )}
+    </section>
     <div className="personalized-section">
       <div className="section-header">
         <h2>

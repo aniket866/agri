@@ -247,7 +247,8 @@ const Birds = () => (
 );
 
 // ─── Home component ───────────────────────────────────────────────────────────
-export default function Home({ user }) {
+export default function Home() {
+  const { user } = useAuthStore();
   const [statValues, setStatValues] = React.useState([0, 0, 0, 0]);
   const [dailyQuote, setDailyQuote] = React.useState(getDailyQuote());
 

@@ -50,6 +50,31 @@ export const useUiStore = create((set) => ({
   // Language options (for reference - actual language change is handled by i18n)
   languageOptions: LANGUAGE_OPTIONS,
 
+  // Language
+  preferredLang: 'en',
+  setPreferredLang: (lang) => set({ preferredLang: lang }),
+
+  // Network
+  isOffline: !navigator.onLine,
+  setIsOffline: (isOffline) => set({ isOffline }),
+
+  // Theme toggle
+  toggleTheme: () => set((state) => {
+    const newTheme = state.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('agri:theme', newTheme);
+    return { theme: newTheme };
+  }),
+
+  // Modals / Overlays
+  showMoreMenu: false,
+  setShowMoreMenu: (show) => set({ showMoreMenu: show }),
+  
+  showScorecard: false,
+  setShowScorecard: (show) => set({ showScorecard: show }),
+
+  showScrollTop: false,
+  setShowScrollTop: (show) => set({ showScrollTop: show }),
+
   // Navigation sidebar
   isNavOpen: false,
   toggleNav: () => set((state) => ({ isNavOpen: !state.isNavOpen })),

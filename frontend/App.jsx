@@ -144,18 +144,16 @@ const GuestBanner = ({ onSignUp }) => (
 function App() {
   const navigate = useNavigate();
   const scorecardRef = useRef(null);
-  const [preferredLang, setPreferredLang] = useState(getInitialLanguage);
-  const [isOpen, setIsOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
-  const [user, setUser] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [profileCompleted, setProfileCompleted] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [showScorecard, setShowScorecard] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   
+  // Zustand Stores
+  const { user, userData, loading, profileCompleted, setUser, setUserData, setLoading, setProfileCompleted } = useAuthStore();
+  const { 
+    theme, toggleTheme, preferredLang, setPreferredLang, 
+    isNavOpen, setNavOpen, isOffline, setIsOffline,
+    showMoreMenu, setShowMoreMenu, showScorecard, setShowScorecard,
+    showScrollTop, setShowScrollTop
+  } = useUiStore();
+
   const { liteMode, setLiteMode, detectAndSetLiteMode } = usePerformanceStore();
 
   useEffect(() => {
@@ -166,8 +164,6 @@ function App() {
   const location = useLocation();
 
   useNotifications();
-
-  /* ---------------- THEME SYSTEM (Moved to ThemeProvider) ---------------- */
 
   /* ---------------- LANGUAGE AUTO-TRANS ---------------- */
   useEffect(() => {
@@ -185,8 +181,6 @@ function App() {
       return;
     }
 
-    // Safety timeout — if Firebase auth never responds (revoked key, network issue),
-    // force loading=false so the app doesn't hang forever on the spinner.
     const safetyTimer = setTimeout(() => {
       setLoading(false);
     }, 5000);
@@ -220,7 +214,7 @@ function App() {
       }
     });
     return () => { clearTimeout(safetyTimer); unsubscribeAuth(); };
-  }, []);
+  }, [setUser, setUserData, setLoading, setProfileCompleted]);
 
   // E2EE Key Generation Sync
   useEffect(() => {
@@ -261,7 +255,7 @@ function App() {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, []);
+  }, [setIsOffline]);
 
   // Scroll to Top logic
   useEffect(() => {
@@ -270,7 +264,7 @@ function App() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [setShowScrollTop]);
 
   // Click outside scorecard
   useEffect(() => {
@@ -281,9 +275,9 @@ function App() {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setShowScorecard]);
 
-  const handleNavToggle = () => setIsOpen(!isOpen);
+  const handleNavToggle = () => setNavOpen(!isNavOpen);
   const handleThemeToggle = toggleTheme;
   const handleLogout = async () => {
     try {
@@ -308,7 +302,7 @@ function App() {
         </div>
       )}
 
-      <nav className={`navbar ${isOpen ? "menu-open" : ""}`} role="navigation" aria-label="Main Navigation">
+      <nav className={`navbar ${isNavOpen ? "menu-open" : ""}`} role="navigation" aria-label="Main Navigation">
         <div className="nav-left">
           <Link to="/" className="brand">Fasal Saathi</Link>
         </div>
