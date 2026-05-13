@@ -560,7 +560,7 @@ export default function Home() {
               <FaQuoteLeft className="quote-icon" />
               <p className="testimonial-text">{testimonial.text}</p>
               <div className="testimonial-author">
-  <div className="author-avatar">
+                <div className="author-avatar">
     {testimonial.name.charAt(0)}
   </div>
 
