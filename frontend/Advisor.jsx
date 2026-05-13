@@ -72,6 +72,7 @@ import {
  } from "lucide-react";
 import { FaSync } from "react-icons/fa";
 import { useAdvisorStore } from "./stores/advisorStore";
+import { useAuthStore } from "./stores/authStore";
 
 import { useYieldPrediction } from "./hooks/useYieldPrediction";
 import { auth, db } from "./lib/firebase";
@@ -86,7 +87,8 @@ import {
   searchLocationByName,
 } from "./weather/weatherService";
 
-export default function Advisor({ userData }) {
+export default function Advisor() {
+  const { userData } = useAuthStore();
   const navigate = useNavigate();
   
   const {
@@ -428,7 +430,7 @@ export default function Advisor({ userData }) {
     return { threshold: points, name: "Maximum Rank", icon: <Gem size={16} style={{ color: '#4facfe' }} /> };
   };
 
-  const currentReputation = userProfile?.reputation || 0;
+  const currentReputation = userData?.reputation || 0;
   const nextBadge = getNextBadgeThreshold(currentReputation);
   const progressPercent = Math.min((currentReputation / nextBadge.threshold) * 100, 100);
 
@@ -1195,15 +1197,15 @@ export default function Advisor({ userData }) {
               <div className="preview-body">
                 <div className="preview-row">
                   <span>Farmer:</span>
-                  <strong>{userProfile?.displayName || "Farmer"}</strong>
+                  <strong>{userData?.displayName || "Farmer"}</strong>
                 </div>
                 <div className="preview-row">
                   <span>Primary Crop:</span>
-                  <strong>{userProfile?.cropType || "Not set"}</strong>
+                  <strong>{userData?.cropType || "Not set"}</strong>
                 </div>
                 <div className="preview-row">
                   <span>Location:</span>
-                  <strong>{userProfile?.address || userProfile?.location || "India"}</strong>
+                  <strong>{userData?.address || userData?.location || "India"}</strong>
                 </div>
                 <div className="preview-divider"></div>
                 <div className="preview-row">
@@ -1215,15 +1217,15 @@ export default function Advisor({ userData }) {
 
             <div className="export-actions-grid">
               <button className="export-btn pdf" onClick={() => generateBankPDF({
-                farmerName: userProfile?.displayName || "Farmer",
-                cropType: userProfile?.cropType || "N/A",
-                landArea: userProfile?.landArea || "N/A",
-                season: userProfile?.season || "N/A",
-                location: userProfile?.address || userProfile?.location || "India",
-                estimatedRevenue: userProfile?.estimatedRevenue || 0,
-                estimatedCost: userProfile?.estimatedCost || 0,
-                netProfit: userProfile?.netProfit || 0,
-                riskLevel: userProfile?.riskLevel || "Moderate",
+                farmerName: userData?.displayName || "Farmer",
+                cropType: userData?.cropType || "N/A",
+                landArea: userData?.landArea || "N/A",
+                season: userData?.season || "N/A",
+                location: userData?.address || userData?.location || "India",
+                estimatedRevenue: userData?.estimatedRevenue || 0,
+                estimatedCost: userData?.estimatedCost || 0,
+                netProfit: userData?.netProfit || 0,
+                riskLevel: userData?.riskLevel || "Moderate",
                 date: new Date().toLocaleDateString("en-IN"),
               })}>
                 <div className="btn-icon"><FileText size={20} /></div>
@@ -1234,15 +1236,15 @@ export default function Advisor({ userData }) {
               </button>
 
               <button className="export-btn csv" onClick={() => generateCSV({
-                farmerName: userProfile?.displayName || "Farmer",
-                cropType: userProfile?.cropType || "N/A",
-                landArea: userProfile?.landArea || "N/A",
-                season: userProfile?.season || "N/A",
-                location: userProfile?.address || userProfile?.location || "India",
-                estimatedRevenue: userProfile?.estimatedRevenue || 0,
-                estimatedCost: userProfile?.estimatedCost || 0,
-                netProfit: userProfile?.netProfit || 0,
-                riskLevel: userProfile?.riskLevel || "Moderate",
+                farmerName: userData?.displayName || "Farmer",
+                cropType: userData?.cropType || "N/A",
+                landArea: userData?.landArea || "N/A",
+                season: userData?.season || "N/A",
+                location: userData?.address || userData?.location || "India",
+                estimatedRevenue: userData?.estimatedRevenue || 0,
+                estimatedCost: userData?.estimatedCost || 0,
+                netProfit: userData?.netProfit || 0,
+                riskLevel: userData?.riskLevel || "Moderate",
                 date: new Date().toLocaleDateString("en-IN"),
               })}>
                 <div className="btn-icon"><BarChart3 size={20} /></div>
@@ -1261,7 +1263,7 @@ export default function Advisor({ userData }) {
               <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>
                 Generate a cryptographically signed, tamper-proof report for official bank applications.
               </p>
-              <BankReports userData={userProfile} />
+              <BankReports userData={userData} />
             </div>
 
             <p className="report-disclaimer">
@@ -1488,7 +1490,7 @@ export default function Advisor({ userData }) {
         <div className="weather-overlay" onClick={() => setShowGreenPractices(false)}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <GreenPractices 
-              userProfile={userProfile} 
+              userData={userData} 
               onClose={() => setShowGreenPractices(false)} 
             />
           </div>
