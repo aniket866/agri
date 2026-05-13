@@ -1,6 +1,22 @@
 import React, { useMemo } from "react";
 import "./PersonalizedAdvisory.css";
 import { generateRecommendations } from "./utils/recommendationEngine";
+import { 
+  AlertTriangle, 
+  ThermometerSun, 
+  Snowflake, 
+  Wheat, 
+  Sprout, 
+  Leaf, 
+  CloudRain, 
+  CloudSnow, 
+  Sun,
+  Info,
+  Droplets,
+  Calendar
+} from "lucide-react";
+
+import { useAuthStore } from "./stores/authStore";
 
 /**
  * Derive the current Indian agricultural season from the calendar month
@@ -20,58 +36,209 @@ function deriveSeasonFromCalendar() {
   return "Rabi"; // November – February
 }
 
-export default function PersonalizedRecommendations({ userProfile, weatherData }) {
+export default function PersonalizedRecommendations({ weatherData }) {
+  const { userData } = useAuthStore();
 
   /**
    * Resolve the season to pass to the recommendation engine.
    *
    * Priority:
-   *   1. userProfile.season  — explicit user preference (most accurate)
+   *   1. userData.season  — explicit user preference (most accurate)
    *   2. Calendar fallback   — derived from current month so seasonal
    *                            recommendation branches never stay silent
    *                            when the profile field is missing.
    */
   const resolvedSeason = useMemo(() => {
-    if (userProfile?.season) return userProfile.season;
+    if (userData?.season) return userData.season;
     return deriveSeasonFromCalendar();
-  }, [userProfile?.season]);
+  }, [userData?.season]);
 
   const recommendations = useMemo(() => {
-    if (!userProfile) return [];
+    if (!userData) return [];
 
     return generateRecommendations({
       weatherData,
-      cropType: userProfile.cropType,
+      cropType: userData.cropType,
       season: resolvedSeason,
     });
 
-  }, [userProfile, weatherData, resolvedSeason]);
+  }, [userData, weatherData, resolvedSeason]);
+
+  if (!userProfile) {
+    return (
+      <div className="personalized-section">
+        <div className="section-header">
+          <h2><Info className="section-icon" /> Personalized Recommendations</h2>
+        </div>
+        <div className="empty-state">
+          <div className="empty-icon">👤</div>
+          <p>Complete your profile to get personalized farming advice</p>
+          <button 
+            className="complete-profile-btn"
+            onClick={() => window.location.href = '/profile-setup'}
+          >
+            Complete Profile
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (recommendations.length === 0) {
+    return (
+      <div className="personalized-section">
+        <div className="section-header">
+          <h2><Info className="section-icon" /> Personalized Recommendations</h2>
+        </div>
+        <div className="empty-state">
+          <div className="empty-icon">✓</div>
+          <p>All clear! No urgent recommendations at this time.</p>
+          <p className="empty-subtext">Check back later for updated advice based on weather and crop conditions.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const sortedRecs = [...recommendations].sort((a, b) => {
+    const priority = { warning: 1, heat: 2, frost: 2, crop: 3, season: 4 };
+    return (priority[a.type] || 99) - (priority[b.type] || 99);
+  });
 
   return (
-    <div className="personalized-section">
-      <h2>🎯 Personalized Recommendations</h2>
+    <section className="personalized-section">
 
-      {!userProfile ? (
+      <div className="section-header">
+        <h2>🎯 Personalized Recommendations</h2>
+
+        {weatherData && (
+          <div className="weather-summary">
+            <span>🌡 {weatherData.temp}°C</span>
+            <span>💧 {weatherData.humidity}%</span>
+            <span>🌧 {weatherData.condition}</span>
+          </div>
+        )}
+      </div>
+
+      {!userData ? (
         <p>Complete your profile to get recommendations.</p>
       ) : recommendations.length === 0 ? (
-        <p>No recommendations available.</p>
+
+        <div className="empty-state">
+          <p>No recommendations available right now.</p>
+        </div>
+
       ) : (
+
         <div className="recommendation-grid">
+
           {recommendations.map((rec, index) => (
-            <div key={index} className={`recommendation-card ${rec.type}`}>
+            <div
+              key={index}
+              className={`recommendation-card ${rec.type}`}
+            >
 
-              <div className="rec-icon">{rec.icon}</div>
+              <div className="card-top">
 
-              <h3 style={{ textTransform: "capitalize" }}>
-                {rec.type}
+                <div className="rec-icon">
+                  {rec.icon}
+                </div>
+
+                <span className={`priority ${rec.priority || "medium"}`}>
+                  {rec.priority || "medium"}
+                </span>
+
+              </div>
+
+              <h3>
+                {rec.title || rec.type}
               </h3>
 
               <p>{rec.text}</p>
 
+              <button className="learn-btn">
+                Learn More →
+              </button>
+
             </div>
           ))}
+
         </div>
       )}
+    </section>
+    <div className="personalized-section">
+      <div className="section-header">
+        <h2>
+          <span className="header-icon-wrap">🎯</span>
+          Recommendations for You
+        </h2>
+        <div className="recommendation-meta">
+          {userProfile.cropType && (
+            <span className="crop-badge">
+              <Wheat size={14} />
+              {userProfile.cropType}
+            </span>
+          )}
+          <span className="season-badge">
+            <Calendar size={14} />
+            {resolvedSeason}
+          </span>
+        </div>
+      </div>
+
+      <div className="recommendation-grid">
+        {sortedRecs.map((rec, index) => {
+          const config = TYPE_CONFIG[rec.type];
+          const IconComponent = config.icon;
+          const isCropType = rec.type === 'crop' && userProfile?.cropType;
+          const CropIcon = isCropType ? getCropIcon(userProfile.cropType) : null;
+
+          return (
+            <div 
+              key={index} 
+              className={`recommendation-card ${rec.type}`}
+              style={{
+                background: config.gradient,
+                borderLeft: `4px solid ${config.borderColor}`,
+                animationDelay: `${index * 0.1}s`
+              }}
+              role="alert"
+              aria-live={rec.type === 'warning' || rec.type === 'heat' || rec.type === 'frost' ? 'polite' : 'off'}
+            >
+              <div className="card-header">
+                <div 
+                  className="icon-wrapper"
+                  style={{ background: config.iconBg, color: config.iconColor }}
+                >
+                  {isCropType && CropIcon ? (
+                    <CropIcon size={24} />
+                  ) : (
+                    <IconComponent size={24} />
+                  )}
+                </div>
+                <div className="card-badge" style={{ background: config.borderColor }}>
+                  {config.label}
+                </div>
+              </div>
+
+              <h3 className="card-title">
+                {rec.type === 'warning' && '⚠️ '}
+                {rec.type === 'heat' && '☀️ '}
+                {rec.type === 'frost' && '❄️ '}
+                {rec.type === 'crop' && userProfile?.cropType ? `${userProfile.cropType}: ` : ''}
+                {rec.title || rec.type.charAt(0).toUpperCase() + rec.type.slice(1)}
+              </h3>
+
+              <p className="card-text">{rec.text}</p>
+
+              <div className="card-footer">
+                <span className="priority-indicator">
+                  Priority: {rec.type === 'warning' ? 'High' : rec.type === 'heat' || rec.type === 'frost' ? 'Medium' : 'Info'}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
