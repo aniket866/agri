@@ -374,6 +374,69 @@ export default function Schemes() {
           ))}
         </div>
 
+      <div className="schemes-grid">
+        {filteredSchemes.length > 0 ? (
+          filteredSchemes.map((scheme) => (
+            <div key={scheme.id} className="scheme-card">
+  
+  {/* TOP */}
+  <div className="scheme-top">
+    <div className="scheme-icon">{scheme.icon}</div>
+
+    <div className="scheme-top-content">
+      <span className="scheme-category">
+        {scheme.category}
+      </span>
+
+      <h2 className="scheme-title">
+        {scheme.title}
+      </h2>
+
+      <p className="scheme-fullname">
+        {scheme.fullName}
+      </p>
+    </div>
+  </div>
+
+  {/* BENEFITS */}
+  <div className="info-box benefit-box">
+    <div className="info-title">
+      <FaCheckCircle />
+      <span>Benefits</span>
+    </div>
+
+    <p className="info-content">
+      {scheme.benefits}
+    </p>
+  </div>
+
+  {/* ELIGIBILITY */}
+  <div className="info-box eligibility-box">
+    <div className="info-title">
+      <FaUserCheck />
+      <span>Eligibility</span>
+    </div>
+
+    <p className="info-content">
+      {scheme.eligibility}
+    </p>
+  </div>
+
+  {/* FOOTER */}
+  <div className="scheme-footer">
+    <a
+      href={scheme.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-visit"
+    >
+      Apply on Official Website
+      <FaExternalLinkAlt size={13} />
+    </a>
+  </div>
+</div>
+          ))
+        ) : (
         {/* View tabs */}
         <div className="scheme-view-tabs" role="tablist">
           {[
